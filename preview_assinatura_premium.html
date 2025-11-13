@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Signatures Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HEADER */
+        .header {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .user-info {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 15px;
+            font-weight: 600;
+        }
+
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+        }
+
+        .user-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #10ac84;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--card-color);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.purple { --card-color: #667eea; }
+        .stat-card.pink { --card-color: #ee5a6f; }
+        .stat-card.blue { --card-color: #22a6b3; }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--card-color);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* TABS */
+        .tabs-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: #f8f9fa;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            padding: 30px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* GRID */
+        .signatures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .signature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .signature-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .signature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .signature-card .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .signature-card .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .signature-card .date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* PREVIEW */
+        .preview-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px dashed #ddd;
+        }
+
+        .preview-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            min-height: 300px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Signatures Platform</h1>
+            <p>Gerencie e visualize suas assinaturas de email profissionais</p>
+        </div>
+
+        <aside class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <h3 id="userName">Carregando...</h3>
+                <p id="userEmail">...</p>
+                <span class="status-badge">✓ Conectado</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">🚪 Sair</button>
+        </aside>
+
+        <main class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <div class="stat-number" id="totalSignatures">-</div>
+                    <div class="stat-label">Assinaturas</div>
+                </div>
+                <div class="stat-card pink">
+                    <div class="stat-number" id="totalTemplates">-</div>
+                    <div class="stat-label">Templates</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-number" id="totalBanners">-</div>
+                    <div class="stat-label">Banners</div>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="showTab('signatures', event)">✏️ Minhas Assinaturas</button>
+                    <button class="tab-btn" onclick="showTab('templates', event)">🎨 Templates</button>
+                    <button class="tab-btn" onclick="showTab('preview', event)">👁️ Preview</button>
+                </div>
+
+                <div id="tab-signatures" class="tab-content active">
+                    <div class="loading" id="signaturesLoading">
+                        <div class="spinner"></div>
+                        <p>Carregando assinaturas...</p>
+                    </div>
+                    <div class="signatures-grid" id="signaturesGrid" style="display: none;"></div>
+                </div>
+
+                <div id="tab-templates" class="tab-content">
+                    <div class="loading" id="templatesLoading">
+                        <div class="spinner"></div>
+                        <p>Carregando templates...</p>
+                    </div>
+                    <div class="signatures-grid" id="templatesGrid" style="display: none;"></div>
+                </div>
+
+                <div id="tab-preview" class="tab-content">
+                    <div class="preview-container">
+                        <h3 style="margin-bottom: 20px;">👁️ Visualização da Assinatura</h3>
+                        <div class="preview-box" id="previewBox">
+                            <div class="empty-state">
+                                <p style="font-size: 1.2rem; margin-bottom: 10px;">Nenhuma assinatura selecionada</p>
+                                <p>Clique em uma assinatura na aba "Minhas Assinaturas" para visualizar</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost';
+        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+        
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Não autenticado');
+
+                const user = await response.json();
+                const initials = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('userAvatar').textContent = initials;
+                document.getElementById('userName').textContent = user.full_name;
+                document.getElementById('userEmail').textContent = user.email;
+
+                loadDashboardData();
+            } catch (error) {
+                console.error('Erro:', error);
+                logout();
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                const statsResponse = await fetch(`${API_BASE}/api/v1/analytics/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await statsResponse.json();
+
+                document.getElementById('totalSignatures').textContent = stats.total_signatures || 0;
+                document.getElementById('totalTemplates').textContent = stats.total_templates || 0;
+                document.getElementById('totalBanners').textContent = stats.total_banners || 0;
+
+                loadSignatures();
+                loadTemplates();
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        }
+
+        async function loadSignatures() {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const signatures = await response.json();
+
+                const grid = document.getElementById('signaturesGrid');
+                const loading = document.getElementById('signaturesLoading');
+
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+
+                if (signatures.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><p>Nenhuma assinatura criada ainda</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = signatures.map(sig => `
+                    <div class="signature-card" onclick="viewSignature(${sig.id})">
+                        <h3>✉️ ${sig.name}</h3>
+                        <span class="status ${sig.is_active ? 'active' : ''}">${sig.is_active ? '✓ Ativa' : 'Inativa'}</span>
+                        <p class="date">Criada em ${new Date(sig.created_at).toLocaleDateString('pt-BR')}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        }
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/signature-templates/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const templates = await response.json();
+
+                const grid = document.getElementById('templatesGrid');
+                const loading = document.getElementById('templatesLoading');
+
+                loading.style.display = 'none';
+                grid.style.display = 'grid';
+
+                if (templates.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><p>Nenhum template disponível</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = templates.map(tpl => `
+                    <div class="signature-card">
+                        <h3>🎨 ${tpl.name}</h3>
+                        <p style="color: #666; margin: 10px 0;">${tpl.description || 'Sem descrição'}</p>
+                        <span class="status ${tpl.is_active ? 'active' : ''}">${tpl.is_active ? '✓ Ativo' : 'Inativo'}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        }
+
+        async function viewSignature(signatureId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/signatures/${signatureId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const signature = await response.json();
+                
+                showTab('preview', { target: document.querySelectorAll('.tab-btn')[2] });
+                
+                const previewBox = document.getElementById('previewBox');
+                previewBox.innerHTML = signature.html_content || '<p style="color: #999;">Sem conteúdo</p>';
+            } catch (error) {
+                console.error('Erro:', error);
+            }
+        }
+
+        function showTab(tabName, event) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('access_token');
+            sessionStorage.removeItem('access_token');
+            window.location.href = 'index.html';
+        }
+
+        loadUserData();
+    </script>
+</body>
+</html>

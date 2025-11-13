@@ -1,0 +1,37 @@
+<table style="font-family: Arial, sans-serif; font-size: 14px; color: #333; border-collapse: collapse;">
+    <tr>
+        <td style="padding-right: 20px; vertical-align: top;">
+            {% if avatar_url %}
+            <img src="{{ avatar_url }}" alt="{{ full_name }}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+            {% endif %}
+        </td>
+        <td style="vertical-align: top; border-left: 2px solid #0066cc; padding-left: 20px;">
+            <div style="font-weight: bold; font-size: 16px; color: #0066cc; margin-bottom: 5px;">
+                {{ full_name }}
+            </div>
+            {% if job_title %}
+            <div style="font-style: italic; color: #666; margin-bottom: 10px;">
+                {{ job_title }}
+            </div>
+            {% endif %}
+            {% if email %}
+            <div style="margin-bottom: 5px;">
+                <span style="color: #666;">📧</span> <a href="mailto:{{ email }}" style="color: #0066cc; text-decoration: none;">{{ email }}</a>
+            </div>
+            {% endif %}
+            {% if phone %}
+            <div style="margin-bottom: 5px;">
+                <span style="color: #666;">📱</span> {{ phone }}
+            </div>
+            {% endif %}
+            {% if organization_name %}
+            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
+                <strong>{{ organization_name }}</strong>
+                {% if organization_logo %}
+                <br><img src="{{ organization_logo }}" alt="{{ organization_name }}" style="max-width: 150px; margin-top: 10px;">
+                {% endif %}
+            </div>
+            {% endif %}
+        </td>
+    </tr>
+</table>

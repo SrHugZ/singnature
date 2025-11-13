@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - Assinatura de Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0052a3;
+        }
+        #preview {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Preview de Assinatura de Email</h1>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="seu@email.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" placeholder="sua senha" required>
+        </div>
+        
+        <button onclick="carregarAssinatura()">🔍 Carregar Minha Assinatura</button>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="preview">
+            <p style="text-align: center; color: #999;">
+                ⬆️ Faça login acima para ver sua assinatura
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function carregarAssinatura() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const previewDiv = document.getElementById('preview');
+            
+            errorDiv.textContent = '';
+            
+            try {
+                // 1. Fazer login
+                const loginResponse = await fetch('http://localhost/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (!loginResponse.ok) {
+                    throw new Error('Erro no login. Verifique email e senha.');
+                }
+                
+                const loginData = await loginResponse.json();
+                const token = loginData.access_token;
+                
+                // 2. Buscar assinaturas
+                const signaturesResponse = await fetch('http://localhost/api/v1/signatures/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!signaturesResponse.ok) {
+                    throw new Error('Erro ao buscar assinaturas.');
+                }
+                
+                const signatures = await signaturesResponse.json();
+                
+                if (signatures.length === 0) {
+                    previewDiv.innerHTML = '<p style="color: orange;">⚠️ Você ainda não tem assinaturas criadas.</p>';
+                    return;
+                }
+                
+                // 3. Mostrar primeira assinatura
+                const signature = signatures[0];
+                previewDiv.innerHTML = `
+                    <h3>📧 ${signature.name}</h3>
+                    <hr>
+                    ${signature.html_content || '<p>Assinatura sem conteúdo HTML</p>'}
+                `;
+                
+            } catch (error) {
+                errorDiv.textContent = '❌ ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

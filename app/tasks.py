@@ -1,0 +1,24 @@
+from celery import Celery
+from app.core.config import settings
+
+celery_app = Celery(
+    "signatures_platform",
+    broker=settings.REDIS_URL,
+    backend=settings.REDIS_URL
+)
+
+celery_app.conf.update(
+    task_serializer='json',
+    accept_content=['json'],
+    result_serializer='json',
+    timezone='America/Sao_Paulo',
+    enable_utc=True,
+    task_track_started=True,
+    task_time_limit=300,
+    worker_prefetch_multiplier=1,
+)
+
+
+@celery_app.task(name="test_task")
+def test_task(message: str) -> str:
+    return f"Processed: {message}"

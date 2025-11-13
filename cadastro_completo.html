@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - Signatures Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .optional {
+            color: #999;
+            font-weight: 400;
+            font-size: 0.85rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-preview {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .upload-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 10px;
+            border: 3px solid #667eea;
+        }
+
+        .upload-preview.active {
+            display: block;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.4s ease;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border-left: 4px solid #3c3;
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 40px 30px;
+            display: none;
+        }
+
+        .success-container.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: scaleUp 0.5s ease;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            color: #555;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Criar Conta</h1>
+            <p>Preencha seus dados para criar sua assinatura profissional</p>
+        </div>
+
+        <div id="formContainer" class="form-container">
+            <div id="alerts"></div>
+
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                
+                <!-- SEÇÃO: Informações Pessoais -->
+                <div class="form-section">
+                    <h3>👤 Informações Pessoais</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fullName">Nome Completo *</label>
+                            <input type="text" id="fullName" placeholder="João Silva" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jobTitle">Cargo / Função *</label>
+                            <input type="text" id="jobTitle" placeholder="Designer Gráfico" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Foto de Perfil <span class="optional">(opcional - por enquanto)</span></label>
+                        <div class="upload-area" onclick="document.getElementById('photoUpload').click()">
+                            <span style="font-size: 3rem;">📷</span>
+                            <p style="margin-top: 10px; color: #777;">Clique para enviar sua foto</p>
+                            <p style="font-size: 0.85rem; color: #999;">JPG, PNG (máx 5MB) - Em breve!</p>
+                            <input type="file" id="photoUpload" accept="image/*" onchange="previewImage(this, 'photoPreview')">
+                        </div>
+                        <div id="photoPreview" class="upload-preview"></div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: Contatos -->
+                <div class="form-section">
+                    <h3>📞 Contatos</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="phone1">Telefone Principal *</label>
+                            <input type="tel" id="phone1" placeholder="+00 123 456 7890" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone2">Telefone Secundário <span class="optional">(opcional)</span></label>
+                            <input type="tel" id="phone2" placeholder="+00 123 456 7890">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="email">E-mail Profissional *</label>
+                            <input type="email" id="email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="website">Site <span class="optional">(opcional)</span></label>
+                            <input type="url" id="website" placeholder="www.seusite.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Endereço Completo <span class="optional">(opcional)</span></label>
+                        <textarea id="address" placeholder="2282 Raoul Wallenberg Place, Stamford, CT 06902"></textarea>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: Redes Sociais -->
+                <div class="form-section">
+                    <h3>🌐 Redes Sociais</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="facebook">Facebook <span class="optional">(opcional)</span></label>
+                            <input type="url" id="facebook" placeholder="https://facebook.com/seuperfil">
+                        </div>
+                        <div class="form-group">
+                            <label for="twitter">Twitter <span class="optional">(opcional)</span></label>
+                            <input type="url" id="twitter" placeholder="https://twitter.com/seuperfil">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="instagram">Instagram <span class="optional">(opcional)</span></label>
+                            <input type="url" id="instagram" placeholder="https://instagram.com/seuperfil">
+                        </div>
+                        <div class="form-group">
+                            <label for="linkedin">LinkedIn <span class="optional">(opcional)</span></label>
+                            <input type="url" id="linkedin" placeholder="https://linkedin.com/in/seuperfil">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: Empresa -->
+                <div class="form-section">
+                    <h3>🏢 Empresa</h3>
+                    <div class="form-group">
+                        <label for="organizationName">Nome da Empresa *</label>
+                        <input type="text" id="organizationName" placeholder="Minha Empresa Ltda" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Logotipo da Empresa <span class="optional">(opcional)</span></label>
+                        <div class="upload-area" onclick="document.getElementById('logoUpload').click()">
+                            <span style="font-size: 3rem;">🏢</span>
+                            <p style="margin-top: 10px; color: #777;">Clique para enviar o logotipo</p>
+                            <p style="font-size: 0.85rem; color: #999;">PNG com fundo transparente (recomendado)</p>
+                            <input type="file" id="logoUpload" accept="image/*" onchange="previewImage(this, 'logoPreview')">
+                        </div>
+                        <div id="logoPreview" class="upload-preview"></div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: Senha -->
+                <div class="form-section">
+                    <h3>🔒 Segurança</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="password">Senha *</label>
+                            <input type="password" id="password" placeholder="••••••••" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Senha *</label>
+                            <input type="password" id="confirmPassword" placeholder="••••••••" required minlength="8">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="submitText">🚀 Criar Conta e Gerar Assinatura</span>
+                    <span id="submitLoading" class="loading" style="display: none;"></span>
+                </button>
+
+                <div class="login-link">
+                    Já tem uma conta? <a href="index.html">Fazer Login</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="successContainer" class="success-container">
+            <div class="success-icon">✅</div>
+            <h2>Conta Criada com Sucesso!</h2>
+            <p id="successMessage">Sua assinatura profissional foi gerada automaticamente!</p>
+            <button class="btn btn-primary" onclick="window.location.href='index.html?registered=true'">
+                Fazer Login Agora
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost';
+        let photoFile = null;
+        let logoFile = null;
+
+        function showAlert(message, type = 'error') {
+            const alertsDiv = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `${type === 'error' ? '❌' : '✅'} <span>${message}</span>`;
+            alertsDiv.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validar tamanho (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('Arquivo muito grande. Máximo 5MB', 'error');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.classList.add('active');
+                };
+                reader.readAsDataURL(file);
+                
+                // Salvar arquivo
+                if (input.id === 'photoUpload') {
+                    photoFile = file;
+                } else if (input.id === 'logoUpload') {
+                    logoFile = file;
+                }
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            // Coletar dados
+            const formData = {
+                full_name: document.getElementById('fullName').value.trim(),
+                job_title: document.getElementById('jobTitle').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+                confirm_password: document.getElementById('confirmPassword').value,
+                organization_name: document.getElementById('organizationName').value.trim(),
+                phone1: document.getElementById('phone1').value.trim(),
+                phone2: document.getElementById('phone2').value.trim() || null,
+                website: document.getElementById('website').value.trim() || null,
+                address: document.getElementById('address').value.trim() || null,
+                facebook: document.getElementById('facebook').value.trim() || null,
+                twitter: document.getElementById('twitter').value.trim() || null,
+                instagram: document.getElementById('instagram').value.trim() || null,
+                linkedin: document.getElementById('linkedin').value.trim() || null
+            };
+
+            // Validações
+            document.getElementById('alerts').innerHTML = '';
+
+            // Foto é opcional por enquanto
+            // if (!photoFile) {
+            //     showAlert('Por favor, envie sua foto de perfil', 'error');
+            //     return;
+            // }
+
+            if (formData.password !== formData.confirm_password) {
+                showAlert('As senhas não coincidem', 'error');
+                return;
+            }
+
+            if (formData.password.length < 8) {
+                showAlert('A senha deve ter no mínimo 8 caracteres', 'error');
+                return;
+            }
+
+            // Desabilitar botão
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitText').style.display = 'none';
+            document.getElementById('submitLoading').style.display = 'inline-block';
+
+            try {
+                // TODO: Implementar upload de arquivos depois
+                // Por enquanto, usar URLs placeholder
+                let photoUrl = photoFile ? 'https://via.placeholder.com/200' : '';
+                let logoUrl = logoFile ? 'https://via.placeholder.com/150x60' : '';
+
+                // Gerar slug da organização
+                const organizationSlug = formData.organization_name
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '')
+                    + '-' + Date.now();
+
+                // 4. Registrar usuário com todos os dados
+                const registerData = {
+                    email: formData.email,
+                    password: formData.password,
+                    full_name: formData.full_name,
+                    organization_name: formData.organization_name,
+                    organization_slug: organizationSlug,
+                    job_title: formData.job_title,
+                    phone: formData.phone1,
+                    avatar_url: photoUrl,
+                    custom_data: {
+                        phone1: formData.phone1,
+                        phone2: formData.phone2,
+                        website: formData.website,
+                        address: formData.address,
+                        facebook: formData.facebook,
+                        twitter: formData.twitter,
+                        instagram: formData.instagram,
+                        linkedin: formData.linkedin,
+                        logo_url: logoUrl
+                    }
+                };
+
+                const response = await fetch(`${API_BASE}/api/v1/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erro ao criar conta');
+                }
+
+                // Sucesso
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successContainer').classList.add('active');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html?registered=true';
+                }, 3000);
+
+            } catch (error) {
+                showAlert(error.message, 'error');
+                
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitText').style.display = 'inline';
+                document.getElementById('submitLoading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
