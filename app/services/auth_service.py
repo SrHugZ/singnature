@@ -37,7 +37,7 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
     db.add(organization)
     db.flush()
     
-    # Create user (owner)
+    # Create user (owner) — agora salvando phone, job_title e avatar_url
     hashed_pwd = hash_password(user_create.password)
     user = User(
         organization_id=organization.id,
@@ -45,7 +45,10 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
         full_name=user_create.full_name,
         hashed_password=hashed_pwd,
         role=UserRole.OWNER,
-        status=UserStatus.ACTIVE
+        status=UserStatus.ACTIVE,
+        phone=user_create.phone,           # telefone principal (phone1)
+        job_title=user_create.job_title,   # cargo
+        avatar_url=user_create.avatar_url  # foto, se tiver
     )
     db.add(user)
     db.flush()
@@ -88,6 +91,44 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
                 <span style="color: #666;">{{ phone }}</span>
             </div>
             {% endif %}
+
+            {% if phone2 %}
+            <div style="margin-bottom: 5px;">
+                <span style="color: #667eea;">📞</span> 
+                <span style="color: #666;">{{ phone2 }}</span>
+            </div>
+            {% endif %}
+
+            {% if website %}
+            <div style="margin-bottom: 5px;">
+                <span style="color: #667eea;">🌐</span> 
+                <a href="{{ website }}" style="color: #667eea; text-decoration: none;" target="_blank">{{ website }}</a>
+            </div>
+            {% endif %}
+
+            {% if address %}
+            <div style="margin-bottom: 5px; color:#666;">
+                <span style="color: #667eea;">📍</span> {{ address }}
+            </div>
+            {% endif %}
+
+            {% if facebook or instagram or linkedin or twitter %}
+            <div style="margin-top: 10px; font-size: 12px; color:#666;">
+                {% if facebook %}
+                    <div>Facebook: <a href="{{ facebook }}" style="color:#667eea;" target="_blank">{{ facebook }}</a></div>
+                {% endif %}
+                {% if instagram %}
+                    <div>Instagram: <a href="{{ instagram }}" style="color:#667eea;" target="_blank">{{ instagram }}</a></div>
+                {% endif %}
+                {% if linkedin %}
+                    <div>LinkedIn: <a href="{{ linkedin }}" style="color:#667eea;" target="_blank">{{ linkedin }}</a></div>
+                {% endif %}
+                {% if twitter %}
+                    <div>Twitter: <a href="{{ twitter }}" style="color:#667eea;" target="_blank">{{ twitter }}</a></div>
+                {% endif %}
+            </div>
+            {% endif %}
+
             {% if organization_name %}
             <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
                 <strong style="color: #333;">{{ organization_name }}</strong>
@@ -100,7 +141,22 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
     </tr>
 </table>
         """,
-        variables=["full_name", "email", "phone", "job_title", "avatar_url", "organization_name", "organization_logo"],
+        variables=[
+            "full_name",
+            "email",
+            "phone",
+            "job_title",
+            "avatar_url",
+            "organization_name",
+            "organization_logo",
+            "phone2",
+            "website",
+            "address",
+            "facebook",
+            "twitter",
+            "instagram",
+            "linkedin",
+        ],
         is_default=True,
         is_active=True
     )
@@ -110,6 +166,8 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
     # Create default signature for user using Jinja2
     from jinja2 import Template
     
+    custom = user_create.custom_data or {}
+
     context = {
         "full_name": user.full_name,
         "email": user.email,
@@ -117,7 +175,14 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
         "job_title": user.job_title or "",
         "avatar_url": user.avatar_url or "",
         "organization_name": organization.name,
-        "organization_logo": organization.logo_url or ""
+        "organization_logo": custom.get("logo_url") or organization.logo_url or "",
+        "phone2": custom.get("phone2", ""),
+        "website": custom.get("website", ""),
+        "address": custom.get("address", ""),
+        "facebook": custom.get("facebook", ""),
+        "twitter": custom.get("twitter", ""),
+        "instagram": custom.get("instagram", ""),
+        "linkedin": custom.get("linkedin", ""),
     }
     
     template_obj = Template(default_template.html_template)
@@ -127,7 +192,7 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
         user_id=user.id,
         template_id=default_template.id,
         name="Minha Assinatura Principal",
-        custom_data={},
+        custom_data=user_create.custom_data or {},
         html_content=html_content,
         is_active=True
     )

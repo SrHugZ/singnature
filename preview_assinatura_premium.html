@@ -304,6 +304,54 @@
             color: #999;
         }
 
+        /* BOTÕES DE AÇÃO NO PREVIEW */
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-copy {
+            background: #10ac84;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #0e9770;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 172, 132, 0.4);
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -329,6 +377,7 @@
             .container { grid-template-columns: 1fr; }
             .sidebar { position: static; }
             .stats-grid { grid-template-columns: 1fr; }
+            .preview-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -391,6 +440,17 @@
                 <div id="tab-preview" class="tab-content">
                     <div class="preview-container">
                         <h3 style="margin-bottom: 20px;">👁️ Visualização da Assinatura</h3>
+                        
+                        <!-- BOTÕES DE AÇÃO -->
+                        <div class="preview-actions" id="previewActions" style="display: none;">
+                            <button class="btn-action btn-download" onclick="downloadSignature()">
+                                📥 Baixar HTML
+                            </button>
+                            <button class="btn-action btn-copy" onclick="copySignature()">
+                                📋 Copiar HTML
+                            </button>
+                        </div>
+
                         <div class="preview-box" id="previewBox">
                             <div class="empty-state">
                                 <p style="font-size: 1.2rem; margin-bottom: 10px;">Nenhuma assinatura selecionada</p>
@@ -410,6 +470,10 @@
         if (!token) {
             window.location.href = 'index.html';
         }
+
+        // Variáveis globais para armazenar assinatura atual
+        let currentSignatureHTML = '';
+        let currentSignatureName = '';
 
         async function loadUserData() {
             try {
@@ -517,10 +581,22 @@
                 });
                 const signature = await response.json();
                 
+                // Armazenar HTML da assinatura
+                currentSignatureHTML = signature.html_content || '';
+                currentSignatureName = signature.name || 'assinatura';
+                
                 showTab('preview', { target: document.querySelectorAll('.tab-btn')[2] });
                 
                 const previewBox = document.getElementById('previewBox');
-                previewBox.innerHTML = signature.html_content || '<p style="color: #999;">Sem conteúdo</p>';
+                const previewActions = document.getElementById('previewActions');
+                
+                if (currentSignatureHTML) {
+                    previewBox.innerHTML = currentSignatureHTML;
+                    previewActions.style.display = 'flex'; // Mostrar botões
+                } else {
+                    previewBox.innerHTML = '<p style="color: #999;">Sem conteúdo</p>';
+                    previewActions.style.display = 'none'; // Esconder botões
+                }
             } catch (error) {
                 console.error('Erro:', error);
             }
@@ -532,6 +608,61 @@
 
             event.target.classList.add('active');
             document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Função para baixar HTML
+        function downloadSignature() {
+            if (!currentSignatureHTML) {
+                alert('Nenhuma assinatura selecionada!');
+                return;
+            }
+
+            // Criar elemento <a> temporário para download
+            const blob = new Blob([currentSignatureHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentSignatureName}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Feedback visual
+            const btn = event.target.closest('.btn-download');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ Baixado!';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // Função para copiar HTML
+        function copySignature() {
+            if (!currentSignatureHTML) {
+                alert('Nenhuma assinatura selecionada!');
+                return;
+            }
+
+            // Copiar para área de transferência
+            navigator.clipboard.writeText(currentSignatureHTML)
+                .then(() => {
+                    // Feedback visual
+                    const btn = event.target.closest('.btn-copy');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '✅ Copiado!';
+                    btn.disabled = true;
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar:', err);
+                    alert('Erro ao copiar. Tente novamente.');
+                });
         }
 
         function logout() {
