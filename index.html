@@ -333,8 +333,9 @@
     </div>
 
     <script>
-        // ✅ BACKEND CORRETO - http://localhost
-        const API_BASE = 'http://localhost';
+        // ✅ BACKEND CORRETO - mesmo domínio (produção)
+        // usando string vazia faz com que as chamadas sejam relativas ao host atual
+        const API_BASE = '';
 
         // Verificar se há mensagem de sucesso do registro
         const urlParams = new URLSearchParams(window.location.search);
@@ -417,7 +418,7 @@
 
             } catch (error) {
                 console.error('Erro no login:', error);
-                showAlert(error.message, 'error');
+                showAlert(error.message || 'Erro ao conectar com o servidor', 'error');
                 
                 // Reabilitar botão
                 document.getElementById('submitBtn').disabled = false;
@@ -426,10 +427,11 @@
             }
         }
 
-        // Enter para fazer login
+        // Enter para fazer login: melhor usar listener no form para evitar duplicidade
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                // dispara o evento submit do formulário
+                document.getElementById('loginForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
             }
         });
 
