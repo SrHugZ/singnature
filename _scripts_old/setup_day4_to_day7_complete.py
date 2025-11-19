@@ -1014,12 +1014,12 @@ test_endpoint() {
 
 # 1. Health Check
 echo "1️⃣ Health Check"
-curl -s http://localhost/health | python3 -m json.tool
+curl -s https://signature.thebroker.vip/health | python3 -m json.tool
 
 # 2. Registrar usuário
 echo ""
 echo "2️⃣ Registrando usuário..."
-REGISTER=$(curl -s -X POST http://localhost/api/v1/auth/register \\
+REGISTER=$(curl -s -X POST https://signature.thebroker.vip/api/v1/auth/register \\
   -H "Content-Type: application/json" \\
   -d '{
     "email": "admin@empresa.com",
@@ -1033,7 +1033,7 @@ TOKEN=$(echo $REGISTER | python3 -c "import sys, json; print(json.load(sys.stdin
 
 if [ -z "$TOKEN" ]; then
     echo "❌ Falha no registro. Tentando login..."
-    LOGIN=$(curl -s -X POST http://localhost/api/v1/auth/login \\
+    LOGIN=$(curl -s -X POST https://signature.thebroker.vip/api/v1/auth/login \\
       -H "Content-Type: application/json" \\
       -d '{
         "email": "admin@empresa.com",
@@ -1052,7 +1052,7 @@ echo "✅ Token obtido: ${TOKEN:0:50}..."
 # 3. Testar Templates
 echo ""
 echo "3️⃣ Criando template de assinatura..."
-TEMPLATE=$(curl -s -X POST http://localhost/api/v1/signature-templates \\
+TEMPLATE=$(curl -s -X POST https://signature.thebroker.vip/api/v1/signature-templates \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer $TOKEN" \\
   -d '{
@@ -1069,7 +1069,7 @@ echo "✅ Template criado: ID $TEMPLATE_ID"
 # 4. Testar Banner
 echo ""
 echo "4️⃣ Criando banner..."
-BANNER=$(curl -s -X POST http://localhost/api/v1/banners \\
+BANNER=$(curl -s -X POST https://signature.thebroker.vip/api/v1/banners \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer $TOKEN" \\
   -d '{
@@ -1086,7 +1086,7 @@ echo "✅ Banner criado: ID $BANNER_ID"
 # 5. Testar Analytics
 echo ""
 echo "5️⃣ Obtendo estatísticas do dashboard..."
-curl -s http://localhost/api/v1/analytics/dashboard \\
+curl -s https://signature.thebroker.vip/api/v1/analytics/dashboard \\
   -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
 
 # 6. Listar todos endpoints
@@ -1107,7 +1107,7 @@ echo "✅ PROJETO COMPLETO E FUNCIONANDO!"
 echo "========================================"
 echo ""
 echo "📊 Acesse o Swagger UI:"
-echo "   http://localhost/docs"
+echo "   https://signature.thebroker.vip/docs"
 echo ""
 echo "🎯 Próximos passos:"
 echo "   1. Customize os templates de assinatura"
@@ -1139,7 +1139,7 @@ echo "   4. Integre com Google Workspace (opcional)"
     print("   ./test_complete_api.sh")
     
     print("\n4️⃣ Acessar documentação:")
-    print("   http://localhost/docs")
+    print("   https://signature.thebroker.vip/docs")
     
     print("\n" + "="*60)
     print("🎉 PROJETO COMPLETO - DIAS 4 ao 7 IMPLEMENTADOS!")

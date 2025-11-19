@@ -1130,7 +1130,7 @@ def downgrade() -> None:
     print("   sudo docker-compose restart api")
     print()
     print("3. Testar os novos endpoints:")
-    print("   curl http://localhost/docs")
+    print("   curl https://signature.thebroker.vip/docs")
     print()
     print("4. Verificar tabelas criadas:")
     print("   sudo docker-compose exec db mysql -u signatures_user -psignatures_pass signatures_db -e 'SHOW TABLES;'")

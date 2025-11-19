@@ -1025,7 +1025,7 @@ def downgrade() -> None:
     print("   sudo docker-compose restart api")
     print()
     print("3. Testar os novos endpoints:")
-    print("   curl http://localhost/docs")
+    print("   curl https://signature.thebroker.vip/docs")
     print()
     print("🎉 DIA 3 - Setup completo!")
 

@@ -33,7 +33,7 @@ info() {
 }
 
 # Variáveis
-BASE_URL="http://localhost"
+BASE_URL="https://signature.thebroker.vip"
 TIMESTAMP=$(date +%s)
 
 # ================================================================

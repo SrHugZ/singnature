@@ -10,7 +10,7 @@ sudo docker-compose ps | grep "Up" && echo "✅ Containers OK" || echo "❌ Cont
 # Testar API
 echo ""
 echo "2. API respondendo?"
-curl -s http://localhost/health > /dev/null && echo "✅ API OK" || echo "❌ API com problema"
+curl -s https://signature.thebroker.vip/health > /dev/null && echo "✅ API OK" || echo "❌ API com problema"
 
 # Testar HTMLs
 echo ""
@@ -71,7 +71,7 @@ sudo docker-compose ps | grep "Up" && echo "✅ Containers OK" || echo "❌ Cont
 # Testar API
 echo ""
 echo "2. API ainda respondendo?"
-curl -s http://localhost/health > /dev/null && echo "✅ API OK" || echo "❌ API com problema"
+curl -s https://signature.thebroker.vip/health > /dev/null && echo "✅ API OK" || echo "❌ API com problema"
 
 # Testar HTMLs
 echo ""

@@ -333,8 +333,8 @@
     </div>
 
     <script>
-        // ✅ BACKEND CORRETO - http://localhost
-        const API_BASE = 'http://localhost';
+        // ✅ BACKEND CORRETO - https://signature.thebroker.vip
+        const API_BASE = 'https://signature.thebroker.vip';
 
         // Verificar se há mensagem de sucesso do registro
         const urlParams = new URLSearchParams(window.location.search);

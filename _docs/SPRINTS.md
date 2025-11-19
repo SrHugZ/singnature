@@ -16,7 +16,7 @@
 
 ### Testado:
 - ✅ Containers rodando (API, DB, Redis, Nginx, Worker)
-- ✅ API respondendo em http://localhost/health
+- ✅ API respondendo em https://signature.thebroker.vip/health
 - ✅ Banco de dados conectado
 - ✅ CORS configurado
 
