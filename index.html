@@ -1,3 +1,4 @@
+lembrando que meu meu index complto é esse 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -333,15 +334,16 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO
-        // API_BASE vazio -> chamadas relativas (mesmo domínio)
+        // ✅ BACKEND CORRETO - mesmo domínio (produção)
+        // usando string vazia faz com que as chamadas sejam relativas ao host atual
         const API_BASE = '';
 
-        // Se seu backend usa cookie de sessão (Set-Cookie), altere para true.
-        // Quando true, o fetch fará requests com credentials: 'include'.
-        const USE_CREDENTIALS = false;
+        // Verificar se há mensagem de sucesso do registro
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registered') === 'true') {
+            showAlert('Conta criada com sucesso! Faça login para continuar.', 'success');
+        }
 
-        // Mostrar alertas
         function showAlert(message, type = 'error') {
             const alertsDiv = document.getElementById('alerts');
             const alert = document.createElement('div');
@@ -351,68 +353,17 @@
                 <span>${message}</span>
             `;
             alertsDiv.appendChild(alert);
+            
             setTimeout(() => alert.remove(), 5000);
         }
 
-        // Helpers de storage
-        function saveTokensToStorage(accessToken, refreshToken, remember) {
-            if (remember) {
-                if (accessToken) localStorage.setItem('access_token', accessToken);
-                if (refreshToken) localStorage.setItem('refresh_token', refreshToken);
-            } else {
-                if (accessToken) sessionStorage.setItem('access_token', accessToken);
-                if (refreshToken) sessionStorage.setItem('refresh_token', refreshToken);
-            }
-        }
-        function getStoredAccessToken() {
-            return localStorage.getItem('access_token') || sessionStorage.getItem('access_token') || null;
-        }
-        function clearStoredTokens() {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            sessionStorage.removeItem('access_token');
-            sessionStorage.removeItem('refresh_token');
-        }
-
-        // Checa /api/v1/auth/me e, se OK, redireciona
-        async function checkMeAndRedirect(redirectUrl = 'preview_assinatura_premium.html') {
-            try {
-                const token = getStoredAccessToken();
-                const opts = { method: 'GET', headers: {} };
-
-                if (USE_CREDENTIALS) {
-                    opts.credentials = 'include';
-                } else if (token) {
-                    opts.headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                console.log('Checando /api/v1/auth/me com options:', opts, 'token presente?', !!token);
-                const res = await fetch(`${API_BASE}/api/v1/auth/me`, opts);
-                console.log('/api/v1/auth/me status:', res.status);
-                if (res.ok) {
-                    console.log('Sessão válida — redirecionando para', redirectUrl);
-                    window.location.href = redirectUrl;
-                    return true;
-                } else {
-                    console.warn('/api/v1/auth/me retornou não-ok. Limpando tokens.');
-                    clearStoredTokens();
-                    return false;
-                }
-            } catch (err) {
-                console.error('Erro ao checar /api/v1/auth/me:', err);
-                clearStoredTokens();
-                return false;
-            }
-        }
-
-        // FUNÇÃO DE LOGIN
         async function handleLogin(event) {
             event.preventDefault();
 
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const remember = document.getElementById('remember').checked;
 
+            // Limpar alertas anteriores
             document.getElementById('alerts').innerHTML = '';
 
             if (!email || !password) {
@@ -420,92 +371,94 @@
                 return;
             }
 
-            // UI loading
+            // Desabilitar botão
             document.getElementById('submitBtn').disabled = true;
             document.getElementById('submitText').style.display = 'none';
             document.getElementById('submitLoading').style.display = 'inline-block';
 
             try {
                 console.log('Tentando login em:', API_BASE + '/api/v1/auth/login');
-
-                const opts = {
+                
+                const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                };
-                if (USE_CREDENTIALS) opts.credentials = 'include';
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
 
-                const response = await fetch(`${API_BASE}/api/v1/auth/login`, opts);
-                console.log('Response status:', response.status, response.statusText);
-
-                const raw = await response.text();
-                let json = null;
-                try { json = JSON.parse(raw); } catch (e) { /* não-JSON */ }
-
-                console.log('Response body raw:', raw);
-                if (json) console.log('Response body json:', json);
+                console.log('Response status:', response.status);
 
                 if (!response.ok) {
-                    const msg = (json && (json.detail || json.message || json.error)) || raw || 'E-mail ou senha incorretos';
-                    throw new Error(msg);
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Erro:', errorData);
+                    throw new Error(errorData.detail || 'E-mail ou senha incorretos');
                 }
 
-                // Caso backend retorne tokens via JSON
-                if (json && json.access_token) {
-                    console.log('Tokens encontrados no JSON. Salvando...');
-                    saveTokensToStorage(json.access_token, json.refresh_token || null, remember);
+                const data = await response.json();
+                console.log('Login bem-sucedido!');
 
-                    console.log('LocalStorage token:', localStorage.getItem('access_token'));
-                    console.log('SessionStorage token:', sessionStorage.getItem('access_token'));
-
-                    const ok = await checkMeAndRedirect();
-                    if (!ok) showAlert('Login efetuado, mas validação falhou. Verifique o backend.', 'error');
-                    return;
+                // Salvar token
+                if (document.getElementById('remember').checked) {
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
+                } else {
+                    sessionStorage.setItem('access_token', data.access_token);
+                    sessionStorage.setItem('refresh_token', data.refresh_token);
                 }
 
-                // Caso backend use cookie de sessão (Set-Cookie)
-                if (USE_CREDENTIALS) {
-                    console.log('Nenhum token JSON — esperando cookie de sessão. Verifique Application -> Cookies.');
-                    await new Promise(r => setTimeout(r, 500));
-                    const ok = await checkMeAndRedirect();
-                    if (!ok) showAlert('Login processado, mas validação da sessão falhou. Verifique cookies e config do backend.', 'error');
-                    return;
-                }
-
-                // Nenhum token JSON e cookies não habilitados no frontend
-                console.warn('Login retornou 200 mas sem token JSON e USE_CREDENTIALS=false.');
-                showAlert('Login efetuado, mas não foi retornado token. Verifique o backend.', 'error');
+                // Redirecionar para dashboard
+                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'preview_assinatura_premium.html';
+                }, 1500);
 
             } catch (error) {
                 console.error('Erro no login:', error);
                 showAlert(error.message || 'Erro ao conectar com o servidor', 'error');
-            } finally {
-                // UI revert
+                
+                // Reabilitar botão
                 document.getElementById('submitBtn').disabled = false;
                 document.getElementById('submitText').style.display = 'inline';
                 document.getElementById('submitLoading').style.display = 'none';
             }
         }
 
-        // Enter no campo senha dispara submit
+        // Enter para fazer login: melhor usar listener no form para evitar duplicidade
         document.getElementById('password').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                document.getElementById('loginForm').requestSubmit();
+                // dispara o evento submit do formulário
+                document.getElementById('loginForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
             }
         });
 
-        // Ao carregar a página: checar token/cookie e redirecionar se válido
+        // Verificar se já está logado
         window.addEventListener('load', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('registered') === 'true') {
-                showAlert('Conta criada com sucesso! Faça login para continuar.', 'success');
-            }
-
-            const token = getStoredAccessToken();
-            if (token || USE_CREDENTIALS) {
-                console.log('Token/cookie detectado. Verificando validade...');
-                checkMeAndRedirect().then(ok => {
-                    if (!ok) console.log('Usuário não autenticado ou token inválido.');
+            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+            if (token) {
+                console.log('Token encontrado, verificando validade...');
+                // Verificar se o token ainda é válido
+                fetch(`${API_BASE}/api/v1/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Token válido, redirecionando...');
+                        window.location.href = 'preview_assinatura_premium.html';
+                    } else {
+                        console.log('Token inválido, limpando...');
+                        localStorage.removeItem('access_token');
+                        sessionStorage.removeItem('access_token');
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao validar token:', err);
+                    localStorage.removeItem('access_token');
+                    sessionStorage.removeItem('access_token');
                 });
             }
         });
