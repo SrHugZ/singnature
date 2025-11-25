@@ -3,7 +3,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import List
 
-from app.db.models import User, Signature, Banner, BannerClick
+from app.db.models import User, Signature, Banner, BannerClick, SignatureTemplate
 from app.schemas.analytics import (
     DashboardStats,
     BannerPerformance,
@@ -25,22 +25,27 @@ class AnalyticsService:
         # Total de usuários
         total_users = db.query(func.count(User.id)).filter(
             User.organization_id == organization_id
-        ).scalar()
+        ).scalar() or 0
         
         # Total de assinaturas
         total_signatures = db.query(func.count(Signature.id)).join(User).filter(
             User.organization_id == organization_id
-        ).scalar()
+        ).scalar() or 0
+        
+        # Total de templates
+        total_templates = db.query(func.count(SignatureTemplate.id)).filter(
+            SignatureTemplate.organization_id == organization_id
+        ).scalar() or 0
         
         # Banners
         total_banners = db.query(func.count(Banner.id)).filter(
             Banner.organization_id == organization_id
-        ).scalar()
+        ).scalar() or 0
         
         active_banners = db.query(func.count(Banner.id)).filter(
             Banner.organization_id == organization_id,
             Banner.is_active == True
-        ).scalar()
+        ).scalar() or 0
         
         # Stats de banners
         banner_stats = db.query(
@@ -53,6 +58,33 @@ class AnalyticsService:
         total_views = banner_stats.total_views or 0
         total_clicks = banner_stats.total_clicks or 0
         avg_ctr = (total_clicks / total_views * 100) if total_views > 0 else 0.0
+        click_rate = avg_ctr  # Alias para compatibilidade
+        
+        # Calcular mudanças (últimos 30 dias vs 30 dias anteriores)
+        now = datetime.utcnow()
+        thirty_days_ago = now - timedelta(days=30)
+        sixty_days_ago = now - timedelta(days=60)
+        
+        # Views dos últimos 30 dias
+        recent_views = db.query(func.sum(Banner.views_count)).filter(
+            Banner.organization_id == organization_id,
+            Banner.created_at >= thirty_days_ago
+        ).scalar() or 0
+        
+        # Views dos 30 dias anteriores
+        previous_views = db.query(func.sum(Banner.views_count)).filter(
+            Banner.organization_id == organization_id,
+            Banner.created_at >= sixty_days_ago,
+            Banner.created_at < thirty_days_ago
+        ).scalar() or 1  # Evitar divisão por zero
+        
+        # Calcular mudança percentual
+        impressions_change = 0.0
+        if previous_views > 0:
+            impressions_change = ((recent_views - previous_views) / previous_views) * 100
+        
+        # Mudança no número de banners
+        banners_change = active_banners - total_banners + active_banners  # Simplificado
         
         return DashboardStats(
             total_users=total_users,
@@ -61,7 +93,10 @@ class AnalyticsService:
             active_banners=active_banners,
             total_banner_views=total_views,
             total_banner_clicks=total_clicks,
-            average_ctr=round(avg_ctr, 2)
+            average_ctr=round(avg_ctr, 2),
+            click_rate=round(click_rate, 2),
+            impressions_change=round(impressions_change, 2),
+            banners_change=banners_change
         )
     
     def get_top_banners(
@@ -103,6 +138,7 @@ class AnalyticsService:
             User.id,
             User.full_name,
             User.email,
+            User.last_login,
             func.count(Signature.id).label('sig_count')
         ).outerjoin(Signature).filter(
             User.organization_id == organization_id,
