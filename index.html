@@ -456,7 +456,7 @@
                 // Redirecionar com URL ABSOLUTA
                 debug('🔄 Redirecionando para dashboard...');
                 setTimeout(() => {
-                    const dashboardUrl = `${window.location.origin}/preview_assinatura_premium.html`;
+                    const dashboardUrl = `${window.location.origin}/dashboard_novo.html`; // <-- ALTERADO
                     debug('🎯 URL de destino:', dashboardUrl);
                     window.location.href = dashboardUrl;
                 }, 1000);
@@ -502,7 +502,7 @@
                 if (response.ok) {
                     debug('✅ Token válido, redirecionando...');
                     isRedirecting = true;
-                    const dashboardUrl = `${window.location.origin}/preview_assinatura_premium.html`;
+                    const dashboardUrl = `${window.location.origin}/dashboard_novo.html`; // <-- ALTERADO
                     debug('🎯 Redirecionando para:', dashboardUrl);
                     window.location.href = dashboardUrl;
                 } else {
