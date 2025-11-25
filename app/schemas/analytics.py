@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List
 from datetime import datetime
 
 
@@ -11,6 +11,10 @@ class DashboardStats(BaseModel):
     total_banner_views: int
     total_banner_clicks: int
     average_ctr: float
+    # Novos campos para o dashboard premium
+    click_rate: float = 0.0
+    impressions_change: float = 0.0
+    banners_change: int = 0
 
 
 class BannerPerformance(BaseModel):
