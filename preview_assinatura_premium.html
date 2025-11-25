@@ -32,7 +32,6 @@
             color: white;
             box-shadow: 4px 0 20px rgba(102, 126, 234, 0.15);
             z-index: 1000;
-            overflow-y: auto;
         }
 
         .logo-section {
@@ -66,12 +65,6 @@
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 5px;
-        }
-
-        .user-email-sidebar {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-bottom: 10px;
         }
 
         .user-role {
@@ -264,154 +257,154 @@
             color: #856404;
         }
 
-        /* CONTENT SECTIONS */
-        .content-section {
-            display: none;
+        /* CHART CARD */
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
         }
 
-        .content-section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chart-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a1a2e;
         }
 
-        /* SIGNATURES GRID */
-        .signatures-card {
+        .chart-filter {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chart-filter:hover {
+            border-color: #667eea;
+        }
+
+        /* USERS TABLE */
+        .users-card {
             background: white;
             border-radius: 16px;
             padding: 30px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
-        .signatures-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+        .users-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
         }
 
-        .signature-item {
-            background: #f8f9fc;
-            border-radius: 12px;
-            padding: 20px;
+        .search-box {
+            padding: 10px 16px;
             border: 2px solid #e5e7eb;
-            transition: all 0.3s;
-            cursor: pointer;
+            border-radius: 10px;
+            width: 300px;
+            font-size: 0.95rem;
         }
 
-        .signature-item:hover {
+        .search-box:focus {
+            outline: none;
             border-color: #667eea;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
-            transform: translateY(-3px);
         }
 
-        .signature-item h3 {
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th {
+            text-align: left;
+            padding: 15px;
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-weight: 600;
             color: #1a1a2e;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
         }
 
-        .signature-status {
+        .user-email {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .status-badge {
             display: inline-block;
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 10px;
         }
 
-        .signature-status.active {
+        .status-active {
             background: #d4edda;
             color: #155724;
         }
 
-        .signature-status.inactive {
+        .status-inactive {
             background: #f8d7da;
             color: #721c24;
         }
 
-        .signature-date {
-            color: #9ca3af;
-            font-size: 0.85rem;
-        }
-
-        /* PREVIEW SECTION */
-        .preview-card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        .preview-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .btn-action {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
+        .action-menu {
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 1rem;
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-copy {
-            background: #10ac84;
-            color: white;
-        }
-
-        .btn-copy:hover {
-            background: #0e9770;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 172, 132, 0.4);
-        }
-
-        .btn-action:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .preview-box {
-            background: #f8f9fc;
-            border-radius: 12px;
-            padding: 30px;
-            border: 2px dashed #e5e7eb;
-            min-height: 300px;
-        }
-
-        .empty-state {
-            text-align: center;
             color: #9ca3af;
-            padding: 60px 20px;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.2s;
         }
 
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
+        .action-menu:hover {
+            background: #f3f4f6;
         }
 
         /* LOADING STATE */
@@ -435,32 +428,23 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* CHART CARD */
-        .chart-card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            margin-bottom: 30px;
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #c33;
         }
 
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: 1rem; }
 
-        .chart-header h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .sidebar {
-                transform: translateX(-100%);
+                width: 100%;
+                height: auto;
+                position: relative;
             }
             .main-content {
                 margin-left: 0;
@@ -481,23 +465,16 @@
             </div>
             <div class="user-info">
                 <h2 id="userName">Carregando...</h2>
-                <p class="user-email-sidebar" id="userEmail">...</p>
-                <span class="user-role">✓ Premium</span>
+                <span class="user-role" id="userRole">Usuário</span>
             </div>
         </div>
 
         <nav class="nav-menu">
-            <div class="nav-item active" onclick="showSection('dashboard')">
+            <div class="nav-item active">
                 <span>📊</span> Dashboard
             </div>
-            <div class="nav-item" onclick="showSection('signatures')">
+            <div class="nav-item" onclick="window.location.href='/preview_assinatura_premium.html'">
                 <span>✍️</span> Minhas Assinaturas
-            </div>
-            <div class="nav-item" onclick="showSection('templates')">
-                <span>📦</span> Templates
-            </div>
-            <div class="nav-item" onclick="showSection('preview')">
-                <span>👁️</span> Preview
             </div>
         </nav>
 
@@ -508,108 +485,95 @@
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-        
-        <!-- DASHBOARD SECTION -->
-        <div id="section-dashboard" class="content-section active">
-            <div class="header">
-                <h1>Analytics Snapshot</h1>
-            </div>
-
-            <!-- ANALYTICS CARDS -->
-            <div class="analytics-grid">
-                <div class="analytics-card">
-                    <div class="analytics-header">
-                        <span class="analytics-title">Total Assinaturas</span>
-                        <div class="analytics-icon">✍️</div>
-                    </div>
-                    <div class="analytics-value" id="totalSignatures">0</div>
-                    <span class="analytics-change positive">Ativas</span>
-                </div>
-
-                <div class="analytics-card">
-                    <div class="analytics-header">
-                        <span class="analytics-title">Templates</span>
-                        <div class="analytics-icon">🎨</div>
-                    </div>
-                    <div class="analytics-value" id="totalTemplates">0</div>
-                    <span class="analytics-change neutral">Disponíveis</span>
-                </div>
-
-                <div class="analytics-card">
-                    <div class="analytics-header">
-                        <span class="analytics-title">Banners</span>
-                        <div class="analytics-icon">🎯</div>
-                    </div>
-                    <div class="analytics-value" id="totalBanners">0</div>
-                    <span class="analytics-change positive">Ativos</span>
-                </div>
-            </div>
-
-            <!-- CHART -->
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3>Atividade Recente</h3>
-                </div>
-                <canvas id="performanceChart" height="80"></canvas>
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Analytics Snapshot</h1>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="exportData()">📥 Export</button>
+                <button class="btn btn-primary" onclick="createSignature()">➕ Nova Assinatura</button>
             </div>
         </div>
 
-        <!-- SIGNATURES SECTION -->
-        <div id="section-signatures" class="content-section">
-            <div class="header">
-                <h1>Minhas Assinaturas</h1>
+        <!-- ANALYTICS CARDS -->
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <span class="analytics-title">Total Clicks</span>
+                    <div class="analytics-icon">🖱️</div>
+                </div>
+                <div class="analytics-value" id="totalClicks">0</div>
+                <span class="analytics-change positive" id="clicksChange">↑ 0%</span>
+                <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Click-Through Rate</span>
             </div>
 
-            <div class="signatures-card">
-                <div class="loading" id="signaturesLoading">
-                    <div class="spinner"></div>
-                    <p>Carregando assinaturas...</p>
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <span class="analytics-title">Total Impressions</span>
+                    <div class="analytics-icon">👁️</div>
                 </div>
-                <div class="signatures-grid" id="signaturesGrid" style="display: none;"></div>
+                <div class="analytics-value" id="totalImpressions">0</div>
+                <span class="analytics-change neutral" id="impressionsChange">→ 0%</span>
+                <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Views</span>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <span class="analytics-title">Active Banners</span>
+                    <div class="analytics-icon">🎯</div>
+                </div>
+                <div class="analytics-value" id="activeBanners">0</div>
+                <span class="analytics-change positive" id="bannersChange">↑ 0</span>
+                <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Live Now</span>
             </div>
         </div>
 
-        <!-- TEMPLATES SECTION -->
-        <div id="section-templates" class="content-section">
-            <div class="header">
-                <h1>Templates Disponíveis</h1>
+        <!-- CHART -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Analytics Snapshot <span style="background: #667eea; color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; margin-left: 10px;">BETA</span></h3>
+                <select class="chart-filter" id="chartFilter" onchange="updateChart()">
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
+                    <option value="90">Last 3 Months</option>
+                </select>
             </div>
-
-            <div class="signatures-card">
-                <div class="loading" id="templatesLoading">
-                    <div class="spinner"></div>
-                    <p>Carregando templates...</p>
-                </div>
-                <div class="signatures-grid" id="templatesGrid" style="display: none;"></div>
-            </div>
+            <canvas id="performanceChart" height="80"></canvas>
         </div>
 
-        <!-- PREVIEW SECTION -->
-        <div id="section-preview" class="content-section">
-            <div class="header">
-                <h1>Preview de Assinatura</h1>
-            </div>
-
-            <div class="preview-card">
-                <div class="preview-actions" id="previewActions" style="display: none;">
-                    <button class="btn-action btn-download" onclick="downloadSignature()">
-                        📥 Baixar HTML
-                    </button>
-                    <button class="btn-action btn-copy" onclick="copySignature()">
-                        📋 Copiar HTML
-                    </button>
+        <!-- USERS TABLE -->
+        <div class="users-card">
+            <div class="users-header">
+                <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 5px;">
+                        Usuários <span style="color: #9ca3af; font-weight: 400;" id="usersCount">0/0</span>
+                    </h3>
                 </div>
-
-                <div class="preview-box" id="previewBox">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">👁️</div>
-                        <p style="font-size: 1.2rem; margin-bottom: 10px;">Nenhuma assinatura selecionada</p>
-                        <p>Vá para "Minhas Assinaturas" e clique em uma para visualizar</p>
-                    </div>
+                <div style="display: flex; gap: 15px;">
+                    <input type="text" class="search-box" placeholder="🔍 Type to Search..." id="searchBox" oninput="filterUsers()">
                 </div>
             </div>
+
+            <div id="usersLoading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando usuários...</p>
+            </div>
+
+            <div id="usersError" class="error-message" style="display: none;"></div>
+
+            <table class="users-table" id="usersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Última Atividade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                </tbody>
+            </table>
         </div>
-
     </main>
 
     <script>
@@ -617,248 +581,269 @@
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
         if (!token) {
-            window.location.href = 'index.html';
+            window.location.href = '/index.html';
         }
 
-        // Variáveis globais
-        let currentSignatureHTML = '';
-        let currentSignatureName = '';
+        const getHeaders = () => ({
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        });
 
-        // Navegação entre seções
-        function showSection(sectionName) {
-            // Remover active de todas as seções
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remover active de todos os nav-items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Ativar seção selecionada
-            document.getElementById(`section-${sectionName}`).classList.add('active');
-            
-            // Ativar nav-item correspondente
-            event.target.closest('.nav-item').classList.add('active');
+        function logout() {
+            localStorage.removeItem('access_token');
+            sessionStorage.removeItem('access_token');
+            window.location.href = '/index.html';
         }
 
-        // Carregar dados do usuário
+        let allUsers = [];
+        let dashboardStats = null;
+        let chartInstance = null;
+
         async function loadUserData() {
             try {
                 const response = await fetch(`${API_BASE}/api/v1/auth/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: getHeaders()
                 });
 
-                if (!response.ok) throw new Error('Não autenticado');
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
 
-                const user = await response.json();
-                document.getElementById('userName').textContent = user.full_name;
-                document.getElementById('userEmail').textContent = user.email;
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar dados do usuário');
+                }
 
-                loadDashboardData();
+                const userData = await response.json();
+                document.getElementById('userName').textContent = userData.full_name || 'Usuário';
+                document.getElementById('userRole').textContent = userData.role || 'Usuário';
+
+                await loadDashboardData();
             } catch (error) {
-                console.error('Erro:', error);
-                logout();
+                console.error('Erro ao carregar dados do usuário:', error);
+                document.getElementById('userName').textContent = 'Erro ao carregar';
             }
         }
 
-        // Carregar dados do dashboard
         async function loadDashboardData() {
             try {
-                const statsResponse = await fetch(`${API_BASE}/api/v1/analytics/dashboard`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`${API_BASE}/api/v1/analytics/dashboard`, {
+                    headers: getHeaders()
                 });
-                const stats = await statsResponse.json();
 
-                document.getElementById('totalSignatures').textContent = stats.total_signatures || 0;
-                document.getElementById('totalTemplates').textContent = stats.total_templates || 0;
-                document.getElementById('totalBanners').textContent = stats.total_banners || 0;
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
 
-                loadSignatures();
-                loadTemplates();
+                if (!response.ok) {
+                    console.warn('Endpoint de estatísticas não disponível, usando valores padrão');
+                    dashboardStats = {
+                        total_banner_clicks: 0,
+                        total_banner_views: 0,
+                        active_banners: 0,
+                        click_rate: 0,
+                        impressions_change: 0,
+                        banners_change: 0
+                    };
+                } else {
+                    dashboardStats = await response.json();
+                }
+
+                updateAnalyticsCards();
+                await loadUsers();
                 createChart();
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('Erro ao carregar dados do dashboard:', error);
+                dashboardStats = {
+                    total_banner_clicks: 0,
+                    total_banner_views: 0,
+                    active_banners: 0
+                };
+                updateAnalyticsCards();
+                createChart();
             }
         }
 
-        // Carregar assinaturas
-        async function loadSignatures() {
+        function updateAnalyticsCards() {
+            if (!dashboardStats) return;
+
+            document.getElementById('totalClicks').textContent = 
+                (dashboardStats.total_banner_clicks || 0).toLocaleString();
+            
+            document.getElementById('totalImpressions').textContent = 
+                (dashboardStats.total_banner_views || 0).toLocaleString();
+            
+            document.getElementById('activeBanners').textContent = 
+                dashboardStats.active_banners || 0;
+
+            const clickRate = dashboardStats.click_rate || 0;
+            document.getElementById('clicksChange').textContent = 
+                `↑ ${clickRate.toFixed(1)}%`;
+
+            const impressionsChange = dashboardStats.impressions_change || 0;
+            const impressionsElement = document.getElementById('impressionsChange');
+            if (impressionsChange > 0) {
+                impressionsElement.textContent = `↑ ${impressionsChange.toFixed(1)}%`;
+                impressionsElement.className = 'analytics-change positive';
+            } else if (impressionsChange < 0) {
+                impressionsElement.textContent = `↓ ${Math.abs(impressionsChange).toFixed(1)}%`;
+                impressionsElement.className = 'analytics-change neutral';
+            } else {
+                impressionsElement.textContent = '→ 0.0%';
+                impressionsElement.className = 'analytics-change neutral';
+            }
+
+            const bannersChange = dashboardStats.banners_change || 0;
+            document.getElementById('bannersChange').textContent = 
+                bannersChange > 0 ? `↑ ${bannersChange}` : `→ ${dashboardStats.active_banners}`;
+        }
+
+        async function loadUsers() {
             try {
-                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const response = await fetch(`${API_BASE}/api/v1/members/`, {
+                    headers: getHeaders()
                 });
-                const signatures = await response.json();
 
-                const grid = document.getElementById('signaturesGrid');
-                const loading = document.getElementById('signaturesLoading');
-
-                loading.style.display = 'none';
-                grid.style.display = 'grid';
-
-                if (signatures.length === 0) {
-                    grid.innerHTML = '<div class="empty-state"><p>Nenhuma assinatura criada ainda</p></div>';
+                if (response.status === 401) {
+                    logout();
                     return;
                 }
 
-                grid.innerHTML = signatures.map(sig => `
-                    <div class="signature-item" onclick="viewSignature(${sig.id})">
-                        <h3>✉️ ${sig.name}</h3>
-                        <span class="signature-status ${sig.is_active ? 'active' : 'inactive'}">
-                            ${sig.is_active ? '✓ Ativa' : '• Inativa'}
-                        </span>
-                        <p class="signature-date">Criada em ${new Date(sig.created_at).toLocaleDateString('pt-BR')}</p>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Erro:', error);
-            }
-        }
-
-        // Carregar templates
-        async function loadTemplates() {
-            try {
-                const response = await fetch(`${API_BASE}/api/v1/signature-templates/`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const templates = await response.json();
-
-                const grid = document.getElementById('templatesGrid');
-                const loading = document.getElementById('templatesLoading');
-
-                loading.style.display = 'none';
-                grid.style.display = 'grid';
-
-                if (templates.length === 0) {
-                    grid.innerHTML = '<div class="empty-state"><p>Nenhum template disponível</p></div>';
-                    return;
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários');
                 }
 
-                grid.innerHTML = templates.map(tpl => `
-                    <div class="signature-item">
-                        <h3>🎨 ${tpl.name}</h3>
-                        <p style="color: #666; margin: 10px 0;">${tpl.description || 'Sem descrição'}</p>
-                        <span class="signature-status ${tpl.is_active ? 'active' : 'inactive'}">
-                            ${tpl.is_active ? '✓ Ativo' : '• Inativo'}
-                        </span>
-                    </div>
-                `).join('');
+                allUsers = await response.json();
+                renderUsers(allUsers);
+
+                document.getElementById('usersCount').textContent = 
+                    `${allUsers.length}/${allUsers.length}`;
+
             } catch (error) {
-                console.error('Erro:', error);
+                console.error('Erro ao carregar usuários:', error);
+                document.getElementById('usersLoading').style.display = 'none';
+                const errorDiv = document.getElementById('usersError');
+                errorDiv.textContent = 'Erro ao carregar usuários: ' + error.message;
+                errorDiv.style.display = 'block';
             }
         }
 
-        // Visualizar assinatura
-        async function viewSignature(signatureId) {
-            try {
-                const response = await fetch(`${API_BASE}/api/v1/signatures/${signatureId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const signature = await response.json();
-                
-                currentSignatureHTML = signature.html_content || '';
-                currentSignatureName = signature.name || 'assinatura';
-                
-                // Mudar para seção preview
-                showSection('preview');
-                
-                // Simular clique no nav-item de preview
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-                document.querySelectorAll('.nav-item')[3].classList.add('active');
-                
-                const previewBox = document.getElementById('previewBox');
-                const previewActions = document.getElementById('previewActions');
-                
-                if (currentSignatureHTML) {
-                    previewBox.innerHTML = currentSignatureHTML;
-                    previewActions.style.display = 'flex';
-                } else {
-                    previewBox.innerHTML = '<div class="empty-state"><p style="color: #999;">Sem conteúdo</p></div>';
-                    previewActions.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Erro:', error);
-            }
-        }
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
 
-        // Download da assinatura
-        function downloadSignature() {
-            if (!currentSignatureHTML) {
-                alert('Nenhuma assinatura selecionada!');
+            if (!users || users.length === 0) {
+                document.getElementById('usersLoading').style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center" style="padding: 40px;">
+                            Nenhum usuário encontrado
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('usersTable').style.display = 'table';
                 return;
             }
 
-            const blob = new Blob([currentSignatureHTML], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${currentSignatureName}.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            users.forEach(user => {
+                const initials = user.full_name
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
 
-            const btn = event.target.closest('.btn-download');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '✅ Baixado!';
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 2000);
+                const lastActive = user.last_login 
+                    ? new Date(user.last_login).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    })
+                    : 'Nunca';
+
+                const isActive = user.status !== 'INACTIVE';
+                const statusClass = isActive ? 'status-active' : 'status-inactive';
+                const statusText = isActive ? '✓ Ativo' : '✗ Inativo';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">${initials}</div>
+                            <div>
+                                <div class="user-name">${user.full_name}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.role || 'Usuário'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${lastActive}</td>
+                    <td>
+                        <span class="action-menu" onclick="showUserActions(${user.id})">⋮</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('usersLoading').style.display = 'none';
+            document.getElementById('usersTable').style.display = 'table';
         }
 
-        // Copiar assinatura
-        function copySignature() {
-            if (!currentSignatureHTML) {
-                alert('Nenhuma assinatura selecionada!');
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            if (!searchTerm) {
+                renderUsers(allUsers);
                 return;
             }
 
-            navigator.clipboard.writeText(currentSignatureHTML)
-                .then(() => {
-                    const btn = event.target.closest('.btn-copy');
-                    const originalText = btn.innerHTML;
-                    btn.innerHTML = '✅ Copiado!';
-                    btn.disabled = true;
-                    setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }, 2000);
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar:', err);
-                    alert('Erro ao copiar. Tente novamente.');
-                });
+            const filtered = allUsers.filter(user => 
+                user.full_name.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm) ||
+                (user.role && user.role.toLowerCase().includes(searchTerm))
+            );
+
+            renderUsers(filtered);
         }
 
-        // Criar gráfico
         function createChart() {
             const ctx = document.getElementById('performanceChart').getContext('2d');
             
+            const days = 30;
             const labels = [];
             const data = [];
-            for (let i = 29; i >= 0; i--) {
+            
+            for (let i = days - 1; i >= 0; i--) {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
                 labels.push(date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
-                data.push(Math.floor(Math.random() * 50) + 10);
+                
+                const avgViews = dashboardStats ? 
+                    Math.floor(dashboardStats.total_banner_views / days) : 0;
+                const variation = Math.floor(Math.random() * avgViews * 0.3);
+                data.push(avgViews + variation);
             }
 
-            new Chart(ctx, {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Visualizações',
+                        label: 'Impressions',
                         data: data,
                         borderColor: '#667eea',
                         backgroundColor: 'rgba(102, 126, 234, 0.1)',
                         tension: 0.4,
                         fill: true,
                         pointRadius: 3,
-                        pointHoverRadius: 6
+                        pointHoverRadius: 6,
+                        borderWidth: 2
                     }]
                 },
                 options: {
@@ -867,18 +852,34 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            displayColors: false
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: '#f3f4f6'
+                                color: '#f3f4f6',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af'
                             }
                         },
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                maxRotation: 45,
+                                minRotation: 45
                             }
                         }
                     }
@@ -886,15 +887,30 @@
             });
         }
 
-        // Logout
-        function logout() {
-            localStorage.removeItem('access_token');
-            sessionStorage.removeItem('access_token');
-            window.location.href = 'index.html';
+        function updateChart() {
+            const period = document.getElementById('chartFilter').value;
+            createChart();
         }
 
-        // Inicializar
-        loadUserData();
+        function exportData() {
+            alert('Funcionalidade de exportação em desenvolvimento');
+        }
+
+        function createSignature() {
+            window.location.href = '/preview_assinatura_premium.html';
+        }
+
+        function showUserActions(userId) {
+            alert(`Ações do usuário ${userId} - Em desenvolvimento`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+        });
+
+        setInterval(() => {
+            loadDashboardData();
+        }, 5 * 60 * 1000);
     </script>
 </body>
 </html>
