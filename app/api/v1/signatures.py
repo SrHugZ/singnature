@@ -103,6 +103,7 @@ def update_signature(
             detail="Signature not found"
         )
     
+    # Lógica para atualizar a assinatura
     # Atualizar nome se fornecido
     if signature_update.name:
         signature.name = signature_update.name
