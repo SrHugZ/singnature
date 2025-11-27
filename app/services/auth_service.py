@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from datetime import datetime
 import redis
+from jinja2 import Template # Importação movida para o topo
 
 from app.db.models import User, Organization, UserRole, UserStatus, SignatureTemplate, Signature
 from app.schemas.user import UserCreate, UserLogin, TokenResponse
@@ -164,8 +165,6 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
     db.flush()
     
     # Create default signature for user using Jinja2
-    from jinja2 import Template
-    
     custom = user_create.custom_data or {}
 
     context = {
@@ -184,6 +183,7 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
         "instagram": custom.get("instagram", ""),
         "linkedin": custom.get("linkedin", ""),
     }
+    
     
     template_obj = Template(default_template.html_template)
     html_content = template_obj.render(**context)
