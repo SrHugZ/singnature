@@ -441,11 +441,11 @@
 
         /* ESTILOS NOVOS PARA O CONTEÚDO DINÂMICO */
         .content-section {
-            display: none; /* Inicialmente todos ocultos */
+            display: none;
         }
 
         .content-section.active {
-            display: block; /* Apenas o ativo é exibido */
+            display: block;
         }
 
         /* Estilos para a seção Master Signature */
@@ -475,7 +475,7 @@
             font-size: 1rem;
         }
 
-        /* Estilos para a seção Configurações (simples placeholder) */
+        /* Estilos para a seção Configurações */
         .settings-card {
             background: white;
             border-radius: 16px;
@@ -525,7 +525,6 @@
         </div>
 
         <nav class="nav-menu">
-            <!-- Nova estrutura de navegação com data-target -->
             <div class="nav-item active" data-target="dashboard">
                 <span class="icon">📊</span> Dashboard
             </div>
@@ -554,11 +553,8 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO DINÂMICO -->
-
-        <!-- 1. DASHBOARD (Conteúdo existente) -->
+        <!-- 1. DASHBOARD -->
         <section id="dashboard" class="content-section active">
-            <!-- ANALYTICS CARDS -->
             <div class="analytics-grid">
                 <div class="analytics-card">
                     <div class="analytics-header">
@@ -591,7 +587,6 @@
                 </div>
             </div>
 
-            <!-- CHART -->
             <div class="chart-card">
                 <div class="chart-header">
                     <h3>Analytics Snapshot <span style="background: #667eea; color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; margin-left: 10px;">BETA</span></h3>
@@ -603,15 +598,9 @@
                 </div>
                 <canvas id="performanceChart" height="80"></canvas>
             </div>
-
-            <!-- USERS TABLE (Mantida aqui, mas será movida para a aba Equipe) -->
-            <!-- A tabela de usuários será movida para a seção "team" para melhor organização -->
         </section>
 
-        <!-- 2. MASTER SIGNATURE (Nova aba) -->
-        
-
-        <!-- 3. MINHAS ASSINATURAS (Conteúdo atualizado) -->
+        <!-- 3. MINHAS ASSINATURAS -->
         <section id="my-signatures" class="content-section">
             <div id="signaturesLoading" class="loading" style="display: none;">
                 <div class="spinner"></div>
@@ -621,19 +610,15 @@
             <div id="signaturesList"></div>
         </section>
 
-        <!-- 4. TEMPLATES (Nova aba - Placeholder) -->
+        <!-- 4. TEMPLATES -->
         <section id="templates" class="content-section">
             <div class="users-card">
                 <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">Templates de Assinatura</h3>
                 <p>Explore e utilize modelos pré-definidos para criar suas assinaturas rapidamente.</p>
-                <!-- Conteúdo da galeria de templates será implementado aqui -->
             </div>
         </section>
 
-        <!-- 5. EQUIPE (Nova aba - Tabela de Usuários movida para cá) -->
-        
-
-        <!-- 6. CONFIGURAÇÕES (Formulário de edição de usuário) -->
+        <!-- 6. CONFIGURAÇÕES -->
         <section id="settings" class="content-section">
             <div class="settings-card">
                 <h2>Minhas Informações</h2>
@@ -665,8 +650,6 @@
         const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
         if (!token) {
-            // Se o caminho for diferente, ajuste aqui. Ex: window.location.href = '/login.html';
-            // Por enquanto, mantemos o original:
             // window.location.href = '/index.html';
         }
 
@@ -678,8 +661,6 @@
         function logout() {
             localStorage.removeItem('access_token');
             sessionStorage.removeItem('access_token');
-            // Se o caminho for diferente, ajuste aqui. Ex: window.location.href = '/login.html';
-            // Por enquanto, mantemos o original:
             // window.location.href = '/index.html';
         }
 
@@ -687,24 +668,21 @@
         let mySignatures = [];
         let dashboardStats = null;
         let chartInstance = null;
+        let allUsers = [];
 
         // --- FUNÇÕES DE NAVEGAÇÃO ---
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
                 const target = this.getAttribute('data-target');
                 
-                // Remove 'active' de todos os itens de navegação e seções de conteúdo
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
                 
-                // Adiciona 'active' ao item clicado e à seção de conteúdo correspondente
                 this.classList.add('active');
                 document.getElementById(target).classList.add('active');
 
-                // Atualiza o título da página
                 document.getElementById('pageTitle').textContent = this.textContent.trim().split(' ')[1] || 'Dashboard';
 
-                // Lógica específica para a aba Equipe (Team)
                 if (target === 'my-signatures') {
                     document.getElementById('exportBtn').style.display = 'none';
                     document.getElementById('newSignatureBtn').style.display = 'inline-block';
@@ -716,24 +694,20 @@
                     document.getElementById('newSignatureBtn').style.display = 'none';
                     populateSettingsForm();
                 } else if (target === 'dashboard') {
-                    // Mostra os botões de ação do cabeçalho no Dashboard
                     document.getElementById('exportBtn').style.display = 'inline-block';
                     document.getElementById('newSignatureBtn').style.display = 'inline-block';
-                    // Recria o gráfico se necessário (para evitar problemas de redimensionamento)
                     if (chartInstance) {
                         chartInstance.destroy();
                         createChart();
                     }
                 } else {
-                    // Oculta os botões de ação em outras abas (Master Signature, Minhas Assinaturas, Templates, Configurações)
                     document.getElementById('exportBtn').style.display = 'none';
                     document.getElementById('newSignatureBtn').style.display = 'none';
                 }
             });
         });
 
-        // --- FUNÇÕES DE DADOS (EXISTENTES) ---
-
+        // ✅ CORREÇÃO 1: Função loadUserData CORRIGIDA
         async function loadUserData() {
             try {
                 const response = await fetch(`${API_BASE}/api/v1/auth/me`, {
@@ -749,6 +723,7 @@
                     throw new Error('Erro ao carregar dados do usuário');
                 }
 
+                // ✅ CORRIGIDO: Salvando em currentUserData
                 currentUserData = await response.json();
                 document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
                 document.getElementById('userRole').textContent = currentUserData.role || 'Usuário';
@@ -760,6 +735,7 @@
             }
         }
 
+        // ✅ CORREÇÃO 2: Função loadDashboardData CORRIGIDA
         async function loadDashboardData() {
             try {
                 const response = await fetch(`${API_BASE}/api/v1/analytics/dashboard`, {
@@ -786,6 +762,7 @@
                 }
 
                 updateAnalyticsCards();
+                // ✅ CORREÇÃO 2: Linha problemática REMOVIDA
                 await loadSignatures();
                 createChart();
             } catch (error) {
@@ -901,8 +878,16 @@
             document.getElementById('avatar_url').value = currentUserData.avatar_url || '';
         }
 
+        // ✅ CORREÇÃO 3: Salvamento de configurações CORRIGIDO
         document.getElementById('user-form').addEventListener('submit', async function(event) {
             event.preventDefault();
+            
+            // ✅ CORRIGIDO: Validação adicionada
+            if (!currentUserData || !currentUserData.id) {
+                alert('⚠️ Aguarde o carregamento dos dados do usuário!');
+                return;
+            }
+            
             const updatedData = {
                 full_name: document.getElementById('full_name').value,
                 job_title: document.getElementById('job_title').value,
@@ -911,14 +896,8 @@
             };
 
             try {
-                // ✅ CORRIGIDO: Verifica se dados foram carregados
-                if (!currentUserData || !currentUserData.id) {
-                    alert('⚠️ Aguarde o carregamento dos dados do usuário!');
-                    return;
-                }
-                
-                // ✅ CORRIGIDO: Usa o ID do usuário
-                const response = await fetch(`${API_BASE}/api/v1/members/${currentUserData.id}`, {
+                // ✅ CORRIGIDO: Endpoint correto usando ID
+                const response = await fetch(`${API_BASE}/api/v1/members/${currentUserData.id}`, { 
                     method: 'PATCH',
                     headers: getHeaders(),
                     body: JSON.stringify(updatedData)
@@ -930,7 +909,6 @@
                 }
 
                 alert('Alterações salvas com sucesso!');
-                // Recarrega os dados do usuário para atualizar a UI (ex: nome na sidebar)
                 loadUserData();
 
             } catch (error) {
@@ -939,114 +917,9 @@
             }
         });
 
-        // A função loadUsers e suas chamadas foram removidas ou substituídas.
-        function filterUsers() { /* Esta função não é mais necessária */ } {
-            try {
-                const response = await fetch(`${API_BASE}/api/v1/members/`, {
-                    headers: getHeaders()
-                });
-
-                if (response.status === 401) {
-                    logout();
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar usuários');
-                }
-
-                allUsers = await response.json();
-                renderUsers(allUsers);
-
-                document.getElementById('usersCount').textContent = 
-                    `${allUsers.length}/${allUsers.length}`;
-
-            } catch (error) {
-                console.error('Erro ao carregar usuários:', error);
-                document.getElementById('usersLoading').style.display = 'none';
-                const errorDiv = document.getElementById('usersError');
-                errorDiv.textContent = 'Erro ao carregar usuários: ' + error.message;
-                errorDiv.style.display = 'block';
-            }
-        }
-
-        function renderUsers(users) {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-
-            document.getElementById('usersLoading').style.display = 'none';
-
-            if (!users || users.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center" style="padding: 40px; text-align: center; color: #6b7280;">
-                            Nenhum usuário encontrado
-                        </td>
-                    </tr>
-                `;
-                
-                return;
-            }
-
-            users.forEach(user => {
-                const initials = user.full_name
-                    .split(' ')
-                    .map(n => n[0])
-                    .join('')
-                    .toUpperCase()
-                    .substring(0, 2);
-
-                const lastActive = user.last_login 
-                    ? new Date(user.last_login).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    })
-                    : 'Nunca';
-
-                const isActive = user.status !== 'INACTIVE';
-                const statusClass = isActive ? 'status-active' : 'status-inactive';
-                const statusText = isActive ? '✓ Ativo' : '✗ Inativo';
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar">${initials}</div>
-                            <div>
-                                <div class="user-name">${user.full_name}</div>
-                                <div class="user-email">${user.email}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>${user.role || 'Membro'}</td>
-                    <td>
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </td>
-                    <td>${lastActive}</td>
-                    <td>
-                        <button class="action-btn" title="Editar">✏️</button>
-                        <button class="action-btn" title="Remover">🗑️</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-            
-        }
-
-        function filterUsers() {
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            const filteredUsers = allUsers.filter(user => 
-                user.full_name.toLowerCase().includes(searchTerm) ||
-                user.email.toLowerCase().includes(searchTerm)
-            );
-            renderUsers(filteredUsers);
-        }
-
         function createChart() {
             const ctx = document.getElementById('performanceChart').getContext('2d');
             
-            // Dados de exemplo para o gráfico (simulando dados de Impressions)
             const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const data = [1200, 1900, 3000, 5000, 2300, 3000, 4500, 6000, 5500, 7000, 8500, 9200];
 
@@ -1102,11 +975,8 @@
         }
 
         function updateChart() {
-            // Lógica para atualizar o gráfico com base no filtro (simulação)
             const filterValue = document.getElementById('chartFilter').value;
             console.log('Filtrando gráfico por:', filterValue);
-            // Aqui você faria uma nova chamada à API ou filtraria os dados existentes
-            // Por simplicidade, o gráfico de exemplo não será alterado.
         }
 
         // Inicialização
