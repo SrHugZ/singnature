@@ -749,9 +749,9 @@
                     throw new Error('Erro ao carregar dados do usuário');
                 }
 
-                const userData = await response.json();
-                document.getElementById('userName').textContent = userData.full_name || 'Usuário';
-                document.getElementById('userRole').textContent = userData.role || 'Usuário';
+                currentUserData = await response.json();
+                document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
+                document.getElementById('userRole').textContent = currentUserData.role || 'Usuário';
 
                 await loadDashboardData();
             } catch (error) {
@@ -786,7 +786,6 @@
                 }
 
                 updateAnalyticsCards();
-                currentUserData = userData; // Armazena os dados do usuário
                 await loadSignatures();
                 createChart();
             } catch (error) {
@@ -912,8 +911,14 @@
             };
 
             try {
-                // O endpoint para atualizar o próprio usuário é /api/v1/members/me
-                const response = await fetch(`${API_BASE}/api/v1/members/me`, { 
+                // ✅ CORRIGIDO: Verifica se dados foram carregados
+                if (!currentUserData || !currentUserData.id) {
+                    alert('⚠️ Aguarde o carregamento dos dados do usuário!');
+                    return;
+                }
+                
+                // ✅ CORRIGIDO: Usa o ID do usuário
+                const response = await fetch(`${API_BASE}/api/v1/members/${currentUserData.id}`, {
                     method: 'PATCH',
                     headers: getHeaders(),
                     body: JSON.stringify(updatedData)
