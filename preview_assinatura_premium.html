@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Premium - Signatures Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        /* ESTILOS EXISTENTES (COPIADOS DO ARQUIVO ORIGINAL) */
+        /* ESTILOS COMPLETOS */
         * {
             margin: 0;
             padding: 0;
@@ -15,7 +13,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #f8f9fc;
             min-height: 100vh;
             color: #1a1a2e;
@@ -294,119 +292,12 @@
             border-color: #667eea;
         }
 
-        /* USERS TABLE */
+        /* USERS CARD */
         .users-card {
             background: white;
             border-radius: 16px;
             padding: 30px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        .users-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            padding: 10px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            width: 300px;
-            font-size: 0.95rem;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .users-table th {
-            text-align: left;
-            padding: 15px;
-            color: #6b7280;
-            font-weight: 600;
-            font-size: 0.85rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .users-table td {
-            padding: 15px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.95rem;
-            color: #374151;
-        }
-
-        .users-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .user-cell {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #667eea;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .user-email {
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            font-size: 1.1rem;
-            margin-left: 10px;
-            transition: color 0.2s;
-        }
-
-        .action-btn:hover {
-            color: #764ba2;
         }
 
         .loading {
@@ -439,7 +330,6 @@
             text-align: center;
         }
 
-        /* ESTILOS NOVOS PARA O CONTEÚDO DINÂMICO */
         .content-section {
             display: none;
         }
@@ -448,34 +338,7 @@
             display: block;
         }
 
-        /* Estilos para a seção Master Signature */
-        .master-signature-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .master-signature-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 15px;
-        }
-
-        .master-signature-card p {
-            color: #6b7280;
-            margin-bottom: 30px;
-        }
-
-        .master-signature-card .btn-primary {
-            padding: 15px 30px;
-            font-size: 1rem;
-        }
-
-        /* Estilos para a seção Configurações */
+        /* CONFIGURAÇÕES */
         .settings-card {
             background: white;
             border-radius: 16px;
@@ -511,6 +374,17 @@
             margin-top: 30px;
         }
 
+        /* GRÁFICO SIMPLES (SEM CHART.JS) */
+        .simple-chart {
+            height: 300px;
+            background: #f8f9fc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+
     </style>
 </head>
 <body>
@@ -532,6 +406,7 @@
             <div class="nav-item" data-target="my-signatures">
                 <span class="icon">✍️</span> Minhas Assinaturas
             </div>
+            
             <div class="nav-item" data-target="templates">
                 <span class="icon">🖼️</span> Templates
             </div>
@@ -553,7 +428,7 @@
             </div>
         </div>
 
-        <!-- 1. DASHBOARD -->
+        <!-- DASHBOARD -->
         <section id="dashboard" class="content-section active">
             <div class="analytics-grid">
                 <div class="analytics-card">
@@ -563,7 +438,6 @@
                     </div>
                     <div class="analytics-value" id="totalClicks">0</div>
                     <span class="analytics-change positive" id="clicksChange">↑ 0%</span>
-                    <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Click-Through Rate</span>
                 </div>
 
                 <div class="analytics-card">
@@ -573,7 +447,6 @@
                     </div>
                     <div class="analytics-value" id="totalImpressions">0</div>
                     <span class="analytics-change neutral" id="impressionsChange">→ 0%</span>
-                    <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Views</span>
                 </div>
 
                 <div class="analytics-card">
@@ -583,24 +456,20 @@
                     </div>
                     <div class="analytics-value" id="activeBanners">0</div>
                     <span class="analytics-change positive" id="bannersChange">↑ 0</span>
-                    <span style="font-size: 0.8rem; color: #9ca3af; margin-left: 8px;">Live Now</span>
                 </div>
             </div>
 
             <div class="chart-card">
                 <div class="chart-header">
-                    <h3>Analytics Snapshot <span style="background: #667eea; color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; margin-left: 10px;">BETA</span></h3>
-                    <select class="chart-filter" id="chartFilter" onchange="updateChart()">
-                        <option value="30">Last 30 Days</option>
-                        <option value="7">Last 7 Days</option>
-                        <option value="90">Last 3 Months</option>
-                    </select>
+                    <h3>Analytics Snapshot</h3>
                 </div>
-                <canvas id="performanceChart" height="80"></canvas>
+                <div class="simple-chart">
+                    📊 Gráfico de analytics (em desenvolvimento)
+                </div>
             </div>
         </section>
 
-        <!-- 3. MINHAS ASSINATURAS -->
+        <!-- MINHAS ASSINATURAS -->
         <section id="my-signatures" class="content-section">
             <div id="signaturesLoading" class="loading" style="display: none;">
                 <div class="spinner"></div>
@@ -610,7 +479,7 @@
             <div id="signaturesList"></div>
         </section>
 
-        <!-- 4. TEMPLATES -->
+        <!-- TEMPLATES -->
         <section id="templates" class="content-section">
             <div class="users-card">
                 <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">Templates de Assinatura</h3>
@@ -618,7 +487,7 @@
             </div>
         </section>
 
-        <!-- 6. CONFIGURAÇÕES -->
+        <!-- CONFIGURAÇÕES -->
         <section id="settings" class="content-section">
             <div class="settings-card">
                 <h2>Minhas Informações</h2>
@@ -647,30 +516,26 @@
 
     <script>
         const API_BASE = 'https://signature.thebroker.vip';
-        const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
         
-        if (!token) {
-            // window.location.href = '/index.html';
+        function getHeaders() {
+            const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
         }
-
-        const getHeaders = () => ({
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        });
 
         function logout() {
             localStorage.removeItem('access_token');
             sessionStorage.removeItem('access_token');
-            // window.location.href = '/index.html';
+            window.location.href = '/';
         }
 
         let currentUserData = null;
         let mySignatures = [];
         let dashboardStats = null;
-        let chartInstance = null;
-        let allUsers = [];
 
-        // --- FUNÇÕES DE NAVEGAÇÃO ---
+        // NAVEGAÇÃO
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
                 const target = this.getAttribute('data-target');
@@ -681,33 +546,23 @@
                 this.classList.add('active');
                 document.getElementById(target).classList.add('active');
 
-                document.getElementById('pageTitle').textContent = this.textContent.trim().split(' ')[1] || 'Dashboard';
+                const titles = {
+                    'dashboard': 'Dashboard',
+                    'my-signatures': 'Minhas Assinaturas',
+                    'templates': 'Templates',
+                    'settings': 'Configurações'
+                };
+                document.getElementById('pageTitle').textContent = titles[target] || 'Dashboard';
 
-                if (target === 'my-signatures') {
-                    document.getElementById('exportBtn').style.display = 'none';
-                    document.getElementById('newSignatureBtn').style.display = 'inline-block';
-                    if (mySignatures.length === 0) {
-                        loadSignatures();
-                    }
+                if (target === 'my-signatures' && mySignatures.length === 0) {
+                    loadSignatures();
                 } else if (target === 'settings') {
-                    document.getElementById('exportBtn').style.display = 'none';
-                    document.getElementById('newSignatureBtn').style.display = 'none';
                     populateSettingsForm();
-                } else if (target === 'dashboard') {
-                    document.getElementById('exportBtn').style.display = 'inline-block';
-                    document.getElementById('newSignatureBtn').style.display = 'inline-block';
-                    if (chartInstance) {
-                        chartInstance.destroy();
-                        createChart();
-                    }
-                } else {
-                    document.getElementById('exportBtn').style.display = 'none';
-                    document.getElementById('newSignatureBtn').style.display = 'none';
                 }
             });
         });
 
-        // ✅ CORREÇÃO 1: Função loadUserData CORRIGIDA
+        // CARREGAR DADOS DO USUÁRIO
         async function loadUserData() {
             try {
                 const response = await fetch(`${API_BASE}/api/v1/auth/me`, {
@@ -723,7 +578,6 @@
                     throw new Error('Erro ao carregar dados do usuário');
                 }
 
-                // ✅ CORRIGIDO: Salvando em currentUserData
                 currentUserData = await response.json();
                 document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
                 document.getElementById('userRole').textContent = currentUserData.role || 'Usuário';
@@ -735,7 +589,7 @@
             }
         }
 
-        // ✅ CORREÇÃO 2: Função loadDashboardData CORRIGIDA
+        // CARREGAR DASHBOARD
         async function loadDashboardData() {
             try {
                 const response = await fetch(`${API_BASE}/api/v1/analytics/dashboard`, {
@@ -748,35 +602,25 @@
                 }
 
                 if (!response.ok) {
-                    console.warn('Endpoint de estatísticas não disponível, usando valores padrão');
+                    console.warn('Endpoint de estatísticas não disponível');
                     dashboardStats = {
                         total_banner_clicks: 0,
                         total_banner_views: 0,
                         active_banners: 0,
-                        click_rate: 0,
-                        impressions_change: 0,
-                        banners_change: 0
+                        click_rate: 0
                     };
                 } else {
                     dashboardStats = await response.json();
                 }
 
                 updateAnalyticsCards();
-                // ✅ CORREÇÃO 2: Linha problemática REMOVIDA
                 await loadSignatures();
-                createChart();
             } catch (error) {
-                console.error('Erro ao carregar dados do dashboard:', error);
-                dashboardStats = {
-                    total_banner_clicks: 0,
-                    total_banner_views: 0,
-                    active_banners: 0
-                };
-                updateAnalyticsCards();
-                createChart();
+                console.error('Erro ao carregar dashboard:', error);
             }
         }
 
+        // ATUALIZAR CARDS
         function updateAnalyticsCards() {
             if (!dashboardStats) return;
 
@@ -792,25 +636,9 @@
             const clickRate = dashboardStats.click_rate || 0;
             document.getElementById('clicksChange').textContent = 
                 `↑ ${clickRate.toFixed(1)}%`;
-
-            const impressionsChange = dashboardStats.impressions_change || 0;
-            const impressionsElement = document.getElementById('impressionsChange');
-            if (impressionsChange > 0) {
-                impressionsElement.textContent = `↑ ${impressionsChange.toFixed(1)}%`;
-                impressionsElement.className = 'analytics-change positive';
-            } else if (impressionsChange < 0) {
-                impressionsElement.textContent = `↓ ${Math.abs(impressionsChange).toFixed(1)}%`;
-                impressionsElement.className = 'analytics-change neutral';
-            } else {
-                impressionsElement.textContent = '→ 0.0%';
-                impressionsElement.className = 'analytics-change neutral';
-            }
-
-            const bannersChange = dashboardStats.banners_change || 0;
-            document.getElementById('bannersChange').textContent = 
-                bannersChange > 0 ? `↑ ${bannersChange}` : `→ ${dashboardStats.active_banners}`;
         }
 
+        // CARREGAR ASSINATURAS
         async function loadSignatures() {
             const loadingDiv = document.getElementById('signaturesLoading');
             const errorDiv = document.getElementById('signaturesError');
@@ -846,6 +674,7 @@
             }
         }
 
+        // RENDERIZAR ASSINATURAS
         function renderSignatures(signatures) {
             const listDiv = document.getElementById('signaturesList');
             listDiv.innerHTML = '';
@@ -869,6 +698,7 @@
             });
         }
 
+        // PREENCHER FORMULÁRIO
         function populateSettingsForm() {
             if (!currentUserData) return;
             document.getElementById('full_name').value = currentUserData.full_name || '';
@@ -878,11 +708,10 @@
             document.getElementById('avatar_url').value = currentUserData.avatar_url || '';
         }
 
-        // ✅ CORREÇÃO 3: Salvamento de configurações CORRIGIDO
+        // SALVAR CONFIGURAÇÕES
         document.getElementById('user-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             
-            // ✅ CORRIGIDO: Validação adicionada
             if (!currentUserData || !currentUserData.id) {
                 alert('⚠️ Aguarde o carregamento dos dados do usuário!');
                 return;
@@ -896,7 +725,6 @@
             };
 
             try {
-                // ✅ CORRIGIDO: Endpoint correto usando ID
                 const response = await fetch(`${API_BASE}/api/v1/members/${currentUserData.id}`, { 
                     method: 'PATCH',
                     headers: getHeaders(),
@@ -908,78 +736,16 @@
                     throw new Error(errorData.detail || 'Falha ao salvar as alterações');
                 }
 
-                alert('Alterações salvas com sucesso!');
+                alert('✅ Alterações salvas com sucesso!');
                 loadUserData();
 
             } catch (error) {
                 console.error('Erro ao salvar alterações:', error);
-                alert('Erro ao salvar: ' + error.message);
+                alert('❌ Erro ao salvar: ' + error.message);
             }
         });
 
-        function createChart() {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            
-            const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const data = [1200, 1900, 3000, 5000, 2300, 3000, 4500, 6000, 5500, 7000, 8500, 9200];
-
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Impressions',
-                        data: data,
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        pointBackgroundColor: 'white',
-                        pointBorderColor: '#667eea',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#f3f4f6'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function updateChart() {
-            const filterValue = document.getElementById('chartFilter').value;
-            console.log('Filtrando gráfico por:', filterValue);
-        }
-
-        // Inicialização
+        // INICIALIZAÇÃO
         loadUserData();
     </script>
 </body>
