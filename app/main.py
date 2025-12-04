@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1 import auth, organizations, members, signature_templates, signatures, banners, analytics, uploads
@@ -29,6 +30,9 @@ app.include_router(signatures.router, prefix=f"{settings.API_V1_STR}/signatures"
 app.include_router(banners.router, prefix=f"{settings.API_V1_STR}/banners", tags=["banners"])
 app.include_router(analytics.router, prefix=f"{settings.API_V1_STR}/analytics", tags=["analytics"])
 app.include_router(uploads.router, prefix=f"{settings.API_V1_STR}/uploads", tags=["uploads"])
+
+# Servir arquivos estáticos (uploads)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/health")
 def health_check():
