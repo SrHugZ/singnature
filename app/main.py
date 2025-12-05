@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.v1 import auth, organizations, members, signature_templates, signatures, banners, analytics, uploads
+from app.api.v1 import auth, organizations, members, signature_templates, signatures, banners, analytics, uploads, users, upload_fix
 from app.db.database import engine
 from app.db import models
 
@@ -29,7 +29,9 @@ app.include_router(signature_templates.router, prefix=f"{settings.API_V1_STR}/si
 app.include_router(signatures.router, prefix=f"{settings.API_V1_STR}/signatures", tags=["signatures"])
 app.include_router(banners.router, prefix=f"{settings.API_V1_STR}/banners", tags=["banners"])
 app.include_router(analytics.router, prefix=f"{settings.API_V1_STR}/analytics", tags=["analytics"])
+app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(uploads.router, prefix=f"{settings.API_V1_STR}/uploads", tags=["uploads"])
+app.include_router(upload_fix.router, prefix=f"{settings.API_V1_STR}/upload", tags=["upload"])
 
 # Servir arquivos estáticos (uploads)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

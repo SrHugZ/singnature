@@ -424,7 +424,7 @@
             <h1 id="pageTitle">Dashboard</h1>
             <div class="header-actions">
                 <button class="btn btn-outline" id="exportBtn">Export</button>
-                <button class="btn btn-primary" id="newSignatureBtn" onclick="openNewSignatureModal()">➕ Nova Assinatura</button>
+                <button class="btn btn-primary" id="newSignatureBtn">➕ Nova Assinatura</button>
             </div>
         </div>
 
@@ -606,27 +606,9 @@
                     throw new Error('Erro ao carregar dados do usuário');
                 }
 
-                
                 currentUserData = await response.json();
                 document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
-                
-                // Atualizar role com cores e ícones
-                const roleElement = document.getElementById('userRole');
-                const roleMap = {
-                    'OWNER': { text: '👑 Proprietário', color: '#ffd700', bg: '#fff3cd' },
-                    'ADMIN': { text: '⭐ Administrador', color: '#667eea', bg: '#e8edff' },
-                    'MEMBER': { text: '👤 Membro', color: '#6b7280', bg: '#f3f4f6' }
-                };
-                
-                const roleInfo = roleMap[currentUserData.role] || roleMap['MEMBER'];
-                roleElement.textContent = roleInfo.text;
-                roleElement.style.background = roleInfo.bg;
-                roleElement.style.color = roleInfo.color;
-                roleElement.style.border = `2px solid ${roleInfo.color}`;
-                
-                // Mostrar/ocultar funcionalidades baseado em permissão
-                updateUIBasedOnRole(currentUserData.role);
-
+                document.getElementById('userRole').textContent = currentUserData.role || 'Usuário';
 
                 await loadDashboardData();
             } catch (error) {
@@ -771,8 +753,8 @@
             };
 
             try {
-                const response = await fetch(`${API_BASE}/api/v1/users/me`, { 
-                    method: 'PUT',
+                const response = await fetch(`${API_BASE}/api/v1/members/${currentUserData.id}`, { 
+                    method: 'PATCH',
                     headers: getHeaders(),
                     body: JSON.stringify(updatedData)
                 });
@@ -790,58 +772,6 @@
                 alert('❌ Erro ao salvar: ' + error.message);
             }
         });
-
-        
-        function updateUIBasedOnRole(role) {
-            const isAdmin = role === 'OWNER' || role === 'ADMIN';
-            
-            // Botões que só admin pode ver
-            const exportBtn = document.getElementById('exportBtn');
-            
-            if (exportBtn) {
-                if (isAdmin) {
-                    exportBtn.style.display = 'inline-flex';
-                    exportBtn.title = 'Exportar relatórios (Admin)';
-                } else {
-                    exportBtn.style.display = 'none';
-                }
-            }
-            
-            // Adicionar badge nas funcionalidades restritas
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                const target = item.getAttribute('data-target');
-                
-                if (target === 'templates' && !isAdmin) {
-                    // Adicionar indicador visual
-                    if (!item.querySelector('.admin-badge')) {
-                        const badge = document.createElement('span');
-                        badge.className = 'admin-badge';
-                        badge.textContent = '🔒 Admin';
-                        badge.style.cssText = 'font-size: 0.7rem; background: #ffd700; color: #000; padding: 2px 8px; border-radius: 10px; margin-left: auto;';
-                        item.appendChild(badge);
-                    }
-                    
-                    // Adicionar aviso ao clicar
-                    item.addEventListener('click', function(e) {
-                        if (!isAdmin) {
-                            alert('⚠️ Você precisa de permissão de Administrador para acessar esta função.\n\nContate o proprietário da conta.');
-                            e.stopPropagation();
-                        }
-                    }, { once: false });
-                }
-            });
-            
-            // Atualizar cards de analytics
-            const analyticsCards = document.querySelectorAll('.analytics-card');
-            if (!isAdmin && analyticsCards.length > 0) {
-                analyticsCards.forEach(card => {
-                    card.style.filter = 'blur(2px)';
-                    card.style.pointerEvents = 'none';
-                    card.title = 'Disponível apenas para Administradores';
-                });
-            }
-        }
 
         // INICIALIZAÇÃO
         loadUserData();
@@ -994,176 +924,6 @@ if (typeof populateSettingsForm !== 'undefined') {
 
 console.log('✅ Sistema de upload de avatar carregado!');
 
-    </script>
-
-    <!-- MODAL: CRIAR NOVA ASSINATURA -->
-    <div id="newSignatureModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 20px; padding: 40px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="margin: 0; font-size: 1.8rem; color: #1a1a2e;">✨ Nova Assinatura</h2>
-                <button onclick="closeNewSignatureModal()" style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #999;">×</button>
-            </div>
-            
-            <form id="newSignatureForm" onsubmit="createNewSignature(event)">
-                <div style="margin-bottom: 25px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Nome da Assinatura *</label>
-                    <input type="text" id="newSigName" required 
-                           style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem;"
-                           placeholder="Ex: Assinatura Corporativa">
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Selecione um Template *</label>
-                    <select id="newSigTemplate" required
-                            style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem;">
-                        <option value="">Carregando templates...</option>
-                    </select>
-                </div>
-                
-                <div style="margin-bottom: 25px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Informações Adicionais (Opcional)</label>
-                    <textarea id="newSigNotes" rows="3"
-                              style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem; resize: vertical;"
-                              placeholder="Ex: Website, endereço, telefone secundário..."></textarea>
-                    <small style="color: #6b7280; font-size: 0.85rem;">Adicione informações extras que aparecerão na assinatura</small>
-                </div>
-                
-                <div style="display: flex; gap: 15px; margin-top: 30px;">
-                    <button type="button" onclick="closeNewSignatureModal()" 
-                            style="flex: 1; padding: 14px; border: 2px solid #e5e7eb; background: white; border-radius: 10px; font-weight: 600; cursor: pointer; color: #6b7280;">
-                        Cancelar
-                    </button>
-                    <button type="submit" id="createSigBtn"
-                            style="flex: 1; padding: 14px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px; font-weight: 600; cursor: pointer;">
-                        <span id="createSigText">Criar Assinatura</span>
-                        <span id="createSigLoading" style="display: none;">⏳</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Funções do modal
-        function openNewSignatureModal() {
-            document.getElementById('newSignatureModal').style.display = 'flex';
-            loadTemplatesForModal();
-        }
-
-        function closeNewSignatureModal() {
-            document.getElementById('newSignatureModal').style.display = 'none';
-            document.getElementById('newSignatureForm').reset();
-        }
-
-        async function loadTemplatesForModal() {
-            const select = document.getElementById('newSigTemplate');
-            select.innerHTML = '<option value="">Carregando...</option>';
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/v1/signature-templates/`, {
-                    headers: getHeaders()
-                });
-                
-                if (!response.ok) throw new Error('Erro ao carregar templates');
-                
-                const templates = await response.json();
-                
-                if (templates.length === 0) {
-                    select.innerHTML = '<option value="">Nenhum template disponível</option>';
-                    return;
-                }
-                
-                select.innerHTML = '<option value="">Selecione um template</option>';
-                templates.forEach(template => {
-                    const option = document.createElement('option');
-                    option.value = template.id;
-                    option.textContent = template.name;
-                    if (template.is_default) {
-                        option.textContent += ' (Padrão)';
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
-                
-            } catch (error) {
-                console.error('Erro ao carregar templates:', error);
-                select.innerHTML = '<option value="">Erro ao carregar templates</option>';
-            }
-        }
-
-        async function createNewSignature(event) {
-            event.preventDefault();
-            
-            const btn = document.getElementById('createSigBtn');
-            const btnText = document.getElementById('createSigText');
-            const btnLoading = document.getElementById('createSigLoading');
-            
-            const name = document.getElementById('newSigName').value.trim();
-            const templateId = document.getElementById('newSigTemplate').value;
-            const notes = document.getElementById('newSigNotes').value.trim();
-            
-            if (!templateId) {
-                alert('⚠️ Por favor, selecione um template');
-                return;
-            }
-            
-            // Desabilitar botão
-            btn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline';
-            
-            try {
-                const customData = {};
-                if (notes) {
-                    // Tentar parsear como JSON ou usar como texto
-                    try {
-                        Object.assign(customData, JSON.parse(notes));
-                    } catch {
-                        customData.notes = notes;
-                    }
-                }
-                
-                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify({
-                        name: name,
-                        template_id: parseInt(templateId),
-                        custom_data: customData
-                    })
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Erro ao criar assinatura');
-                }
-                
-                alert('✅ Assinatura criada com sucesso!');
-                closeNewSignatureModal();
-                
-                // Recarregar assinaturas
-                mySignatures = [];
-                loadSignatures();
-                
-                // Se estiver em outra aba, ir para "Minhas Assinaturas"
-                document.querySelector('.nav-item[data-target="my-signatures"]').click();
-                
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ ' + error.message);
-            } finally {
-                btn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoading.style.display = 'none';
-            }
-        }
-        
-        // Fechar modal ao clicar fora
-        document.getElementById('newSignatureModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeNewSignatureModal();
-            }
-        });
     </script>
 </body>
 </html>
