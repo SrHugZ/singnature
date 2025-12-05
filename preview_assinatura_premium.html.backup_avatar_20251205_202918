@@ -391,10 +391,7 @@
 
     <div class="sidebar">
         <div class="logo-section">
-            <div class="logo-animation" id="sidebarAvatarContainer">
-            <img id="sidebarAvatar" src="" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; display: none;">
-            <span id="sidebarAvatarPlaceholder">✨</span>
-        </div>
+            <div class="logo-animation">✨</div>
             <div class="user-info">
                 <h2 id="userName">Carregando...</h2>
                 <span class="user-role" id="userRole">Admin Premium</span>
@@ -612,9 +609,6 @@
                 
                 currentUserData = await response.json();
                 document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
-                
-                // Atualizar avatar na sidebar
-                updateSidebarAvatar(currentUserData.avatar_url);
                 
                 // Atualizar role com cores e ícones
                 const roleElement = document.getElementById('userRole');
@@ -849,22 +843,6 @@
             }
         }
 
-        
-        // Função para atualizar avatar na sidebar
-        function updateSidebarAvatar(avatarUrl) {
-            const sidebarAvatar = document.getElementById('sidebarAvatar');
-            const sidebarPlaceholder = document.getElementById('sidebarAvatarPlaceholder');
-            
-            if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
-                sidebarAvatar.src = avatarUrl + '?t=' + Date.now();
-                sidebarAvatar.style.display = 'block';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'none';
-            } else {
-                sidebarAvatar.style.display = 'none';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'block';
-            }
-        }
-
         // INICIALIZAÇÃO
         loadUserData();
     
@@ -923,8 +901,10 @@ async function uploadAvatar(file) {
         
         const data = await response.json();
         
-        // Atualizar sidebar
-        updateSidebarAvatar(data.avatar_url);
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.src = data.avatar_url + '?t=' + Date.now();
+        }
         
         if (currentUserData) {
             currentUserData.avatar_url = data.avatar_url;
