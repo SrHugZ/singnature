@@ -938,7 +938,6 @@
             }
         }
 
-
         // INICIALIZAÇÃO
         loadUserData();
 
@@ -1116,53 +1115,6 @@
         }
 
         function closeNewSignatureModal() {
-
-        // CRIAR NOVA ASSINATURA
-        async function createNewSignature(event) {
-            event.preventDefault();
-            
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const btnText = document.getElementById('createSigBtnText');
-            const btnLoading = document.getElementById('createSigBtnLoading');
-            
-            submitBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline';
-            
-            try {
-                const formData = {
-                    name: document.getElementById('newSigName').value,
-                    template_id: parseInt(document.getElementById('newSigTemplate').value),
-                    custom_data: {}
-                };
-                
-                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
-                    method: 'POST',
-                    headers: {
-                        ...getHeaders(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Erro ao criar assinatura');
-                }
-                
-                alert('✅ Assinatura criada com sucesso!');
-                closeNewSignatureModal();
-                await loadSignatures();
-                
-            } catch (error) {
-                console.error('Erro ao criar assinatura:', error);
-                alert('❌ Erro ao criar assinatura: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoading.style.display = 'none';
-            }
-        }
             document.getElementById('newSignatureModal').style.display = 'none';
             document.getElementById('newSignatureForm').reset();
         }
@@ -1203,6 +1155,21 @@
             }
         }
 
+        async function createNewSignature(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('createSigBtn');
+            const btnText = document.getElementById('createSigText');
+            const btnLoading = document.getElementById('createSigLoading');
+            
+            const name = document.getElementById('newSigName').value.trim();
+            const templateId = document.getElementById('newSigTemplate').value;
+            const notes = document.getElementById('newSigNotes').value.trim();
+            
+            if (!templateId) {
+                alert('⚠️ Por favor, selecione um template');
+                return;
+            }
             
             // Desabilitar botão
             btn.disabled = true;

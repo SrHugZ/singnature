@@ -435,9 +435,6 @@
                 </div>
             </div>
             <div class="header-actions">
-                <div id="companyLogoContainer" style="display: none; margin-right: 20px;">
-                    <img id="companyLogo" src="" alt="Logo" style="max-height: 40px; max-width: 150px; object-fit: contain;">
-                </div>
                 <button class="btn btn-outline" id="exportBtn">Export</button>
                 <button class="btn btn-primary" id="newSignatureBtn" onclick="openNewSignatureModal()">➕ Nova Assinatura</button>
             </div>
@@ -630,10 +627,6 @@
                 // Atualizar avatar na sidebar
                 updateSidebarAvatar(currentUserData.avatar_url);
                 updateHeaderAvatar(currentUserData.avatar_url, currentUserData.full_name);
-                
-                // Buscar logo da empresa do custom_data ou organization
-                const logoUrl = currentUserData.custom_data?.logo_url || currentUserData.organization_logo || "";
-                updateCompanyLogo(logoUrl);
                 
                 // Atualizar role com cores e ícones
                 const roleElement = document.getElementById('userRole');
@@ -887,22 +880,16 @@
 
         // Função para atualizar avatar na sidebar
         function updateSidebarAvatar(avatarUrl) {
-            const sidebarAvatar = document.getElementById('sidebarAvatar');
-            const sidebarPlaceholder = document.getElementById('sidebarAvatarPlaceholder');
+
+        // ATUALIZAR AVATAR NO HEADER
+        function updateHeaderAvatar(avatarUrl, fullName) {
+            const headerAvatar = document.getElementById('headerAvatar');
+            const headerPlaceholder = document.getElementById('headerAvatarPlaceholder');
+            const headerUserName = document.getElementById('headerUserName');
             
-            if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
-                sidebarAvatar.src = avatarUrl + '?t=' + Date.now();
-                sidebarAvatar.style.display = 'block';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'none';
-            } else {
-                if (sidebarPlaceholder && currentUserData && currentUserData.full_name) {
-                    sidebarPlaceholder.textContent = currentUserData.full_name.charAt(0).toUpperCase();
-                }
-                sidebarAvatar.src = '';
-                sidebarAvatar.style.display = 'none';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'block';
+            if (headerUserName && fullName) {
+                headerUserName.textContent = fullName;
             }
-        }
             
             if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
                 if (headerAvatar) {
@@ -937,7 +924,6 @@
                 if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'block';
             }
         }
-
 
         // INICIALIZAÇÃO
         loadUserData();
@@ -1116,53 +1102,6 @@
         }
 
         function closeNewSignatureModal() {
-
-        // CRIAR NOVA ASSINATURA
-        async function createNewSignature(event) {
-            event.preventDefault();
-            
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const btnText = document.getElementById('createSigBtnText');
-            const btnLoading = document.getElementById('createSigBtnLoading');
-            
-            submitBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline';
-            
-            try {
-                const formData = {
-                    name: document.getElementById('newSigName').value,
-                    template_id: parseInt(document.getElementById('newSigTemplate').value),
-                    custom_data: {}
-                };
-                
-                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
-                    method: 'POST',
-                    headers: {
-                        ...getHeaders(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Erro ao criar assinatura');
-                }
-                
-                alert('✅ Assinatura criada com sucesso!');
-                closeNewSignatureModal();
-                await loadSignatures();
-                
-            } catch (error) {
-                console.error('Erro ao criar assinatura:', error);
-                alert('❌ Erro ao criar assinatura: ' + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoading.style.display = 'none';
-            }
-        }
             document.getElementById('newSignatureModal').style.display = 'none';
             document.getElementById('newSignatureForm').reset();
         }
@@ -1203,6 +1142,21 @@
             }
         }
 
+        async function createNewSignature(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('createSigBtn');
+            const btnText = document.getElementById('createSigText');
+            const btnLoading = document.getElementById('createSigLoading');
+            
+            const name = document.getElementById('newSigName').value.trim();
+            const templateId = document.getElementById('newSigTemplate').value;
+            const notes = document.getElementById('newSigNotes').value.trim();
+            
+            if (!templateId) {
+                alert('⚠️ Por favor, selecione um template');
+                return;
+            }
             
             // Desabilitar botão
             btn.disabled = true;
