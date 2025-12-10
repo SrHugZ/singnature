@@ -562,7 +562,7 @@
 
     <script>
         const API_BASE = 'https://signature.thebroker.vip';
-        
+
         function getHeaders() {
             const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
             return {
@@ -626,16 +626,18 @@
 
                 currentUserData = await response.json();
                 document.getElementById('userName').textContent = currentUserData.full_name || 'Usuário';
-                
-                // Atualizar avatar na sidebar
-                updateSidebarAvatar(currentUserData.avatar_url);
+                document.getElementById('headerUserName').textContent = currentUserData.full_name || '';
+
+                // Atualizar avatar
+                updateSidebarAvatar(currentUserData.avatar_url, currentUserData.full_name);
                 updateHeaderAvatar(currentUserData.avatar_url, currentUserData.full_name);
-                
-                // Buscar logo da empresa do custom_data ou organization
-                const logoUrl = currentUserData.custom_data?.logo_url || currentUserData.organization_logo || "";
+
+                // Logo da empresa
+                const logoUrl = (currentUserData.custom_data && currentUserData.custom_data.logo_url) ||
+                                currentUserData.organization_logo || "";
                 updateCompanyLogo(logoUrl);
-                
-                // Atualizar role com cores e ícones
+
+                // Role
                 const roleElement = document.getElementById('userRole');
                 const roleMap = {
                     'OWNER': { text: '👑 Proprietário', color: '#ffd700', bg: '#fff3cd' },
@@ -649,7 +651,6 @@
                 roleElement.style.color = roleInfo.color;
                 roleElement.style.border = `2px solid ${roleInfo.color}`;
                 
-                // Mostrar/ocultar funcionalidades baseado em permissão
                 updateUIBasedOnRole(currentUserData.role);
 
                 await loadDashboardData();
@@ -837,9 +838,7 @@
         function updateUIBasedOnRole(role) {
             const isAdmin = role === 'OWNER' || role === 'ADMIN';
             
-            // Botões que só admin pode ver
             const exportBtn = document.getElementById('exportBtn');
-            
             if (exportBtn) {
                 if (isAdmin) {
                     exportBtn.style.display = 'inline-flex';
@@ -849,13 +848,11 @@
                 }
             }
             
-            // Adicionar badge nas funcionalidades restritas
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
                 const target = item.getAttribute('data-target');
                 
                 if (target === 'templates' && !isAdmin) {
-                    // Adicionar indicador visual
                     if (!item.querySelector('.admin-badge')) {
                         const badge = document.createElement('span');
                         badge.className = 'admin-badge';
@@ -864,7 +861,6 @@
                         item.appendChild(badge);
                     }
                     
-                    // Adicionar aviso ao clicar
                     item.addEventListener('click', function(e) {
                         if (!isAdmin) {
                             alert('⚠️ Você precisa de permissão de Administrador para acessar esta função.\n\nContate o proprietário da conta.');
@@ -874,7 +870,6 @@
                 }
             });
             
-            // Atualizar cards de analytics
             const analyticsCards = document.querySelectorAll('.analytics-card');
             if (!isAdmin && analyticsCards.length > 0) {
                 analyticsCards.forEach(card => {
@@ -885,8 +880,7 @@
             }
         }
 
-        // Função para atualizar avatar na sidebar
-        function updateSidebarAvatar(avatarUrl) {
+        function updateSidebarAvatar(avatarUrl, fullName) {
             const sidebarAvatar = document.getElementById('sidebarAvatar');
             const sidebarPlaceholder = document.getElementById('sidebarAvatarPlaceholder');
             
@@ -895,14 +889,20 @@
                 sidebarAvatar.style.display = 'block';
                 if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'none';
             } else {
-                if (sidebarPlaceholder && currentUserData && currentUserData.full_name) {
-                    sidebarPlaceholder.textContent = currentUserData.full_name.charAt(0).toUpperCase();
-                }
                 sidebarAvatar.src = '';
                 sidebarAvatar.style.display = 'none';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'block';
+                if (sidebarPlaceholder) {
+                    if (fullName) {
+                        sidebarPlaceholder.textContent = fullName.charAt(0).toUpperCase();
+                    }
+                    sidebarPlaceholder.style.display = 'block';
+                }
             }
         }
+
+        function updateHeaderAvatar(avatarUrl, fullName) {
+            const headerAvatar = document.getElementById('headerAvatar');
+            const headerPlaceholder = document.getElementById('headerAvatarPlaceholder');
             
             if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
                 if (headerAvatar) {
@@ -913,7 +913,6 @@
                     headerPlaceholder.style.display = 'none';
                 }
             } else {
-                // Se não tem avatar, mostra inicial do nome
                 if (headerPlaceholder && fullName) {
                     headerPlaceholder.textContent = fullName.charAt(0).toUpperCase();
                     headerPlaceholder.style.display = 'flex';
@@ -924,20 +923,18 @@
                 }
             }
         }
-            const sidebarAvatar = document.getElementById('sidebarAvatar');
-            const sidebarPlaceholder = document.getElementById('sidebarAvatarPlaceholder');
-            
-            if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
-                sidebarAvatar.src = avatarUrl + '?t=' + Date.now();
-                sidebarAvatar.style.display = 'block';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'none';
+
+        function updateCompanyLogo(logoUrl) {
+            const container = document.getElementById('companyLogoContainer');
+            const img = document.getElementById('companyLogo');
+            if (logoUrl) {
+                img.src = logoUrl;
+                container.style.display = 'block';
             } else {
-                sidebarAvatar.src = '';
-                sidebarAvatar.style.display = 'none';
-                if (sidebarPlaceholder) sidebarPlaceholder.style.display = 'block';
+                img.src = '';
+                container.style.display = 'none';
             }
         }
-
 
         // INICIALIZAÇÃO
         loadUserData();
@@ -997,10 +994,9 @@
                 
                 const data = await response.json();
                 
-                // Atualizar sidebar
-                updateSidebarAvatar(data.avatar_url);
+                updateSidebarAvatar(data.avatar_url, currentUserData ? currentUserData.full_name : '');
+                updateHeaderAvatar(data.avatar_url, currentUserData ? currentUserData.full_name : '');
 
-                // Atualizar dados locais
                 if (currentUserData) {
                     currentUserData.avatar_url = data.avatar_url;
                 }
@@ -1041,10 +1037,9 @@
                 removeBtn.style.display = 'none';
                 document.getElementById('avatar-file-input').value = '';
 
-                // Limpar sidebar
-                updateSidebarAvatar(null);
+                updateSidebarAvatar(null, currentUserData ? currentUserData.full_name : '');
+                updateHeaderAvatar(null, currentUserData ? currentUserData.full_name : '');
 
-                // Atualizar dados locais
                 if (currentUserData) {
                     currentUserData.avatar_url = null;
                 }
@@ -1109,62 +1104,77 @@
     </div>
 
     <script>
-        // Funções do modal
         function openNewSignatureModal() {
             document.getElementById('newSignatureModal').style.display = 'flex';
             loadTemplatesForModal();
         }
 
         function closeNewSignatureModal() {
+            document.getElementById('newSignatureModal').style.display = 'none';
+            document.getElementById('newSignatureForm').reset();
+        }
 
-        // CRIAR NOVA ASSINATURA
         async function createNewSignature(event) {
             event.preventDefault();
-            
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const btnText = document.getElementById('createSigBtnText');
-            const btnLoading = document.getElementById('createSigBtnLoading');
-            
+
+            const name = document.getElementById('newSigName').value.trim();
+            const templateId = document.getElementById('newSigTemplate').value;
+            const notes = document.getElementById('newSigNotes').value.trim();
+
+            if (!name || !templateId) {
+                alert('Preencha o nome da assinatura e selecione um template.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('createSigBtn');
+            const btnText = document.getElementById('createSigText');
+            const btnLoading = document.getElementById('createSigLoading');
+
             submitBtn.disabled = true;
             btnText.style.display = 'none';
             btnLoading.style.display = 'inline';
-            
+
             try {
-                const formData = {
-                    name: document.getElementById('newSigName').value,
-                    template_id: parseInt(document.getElementById('newSigTemplate').value),
-                    custom_data: {}
-                };
-                
+                const customData = {};
+                if (notes) {
+                    try {
+                        Object.assign(customData, JSON.parse(notes));
+                    } catch {
+                        customData.notes = notes;
+                    }
+                }
+
                 const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
                     method: 'POST',
-                    headers: {
-                        ...getHeaders(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                    headers: getHeaders(),
+                    body: JSON.stringify({
+                        name: name,
+                        template_id: parseInt(templateId),
+                        custom_data: customData
+                    })
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.detail || 'Erro ao criar assinatura');
                 }
-                
+
                 alert('✅ Assinatura criada com sucesso!');
                 closeNewSignatureModal();
+
+                mySignatures = [];
                 await loadSignatures();
+
+                document.querySelector('.nav-item[data-target="my-signatures"]').click();
                 
             } catch (error) {
                 console.error('Erro ao criar assinatura:', error);
-                alert('❌ Erro ao criar assinatura: ' + error.message);
+                alert('❌ ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline';
                 btnLoading.style.display = 'none';
             }
-        }
-            document.getElementById('newSignatureModal').style.display = 'none';
-            document.getElementById('newSignatureForm').reset();
         }
 
         async function loadTemplatesForModal() {
@@ -1180,7 +1190,7 @@
                 
                 const templates = await response.json();
                 
-                if (templates.length === 0) {
+                if (!templates || templates.length === 0) {
                     select.innerHTML = '<option value="">Nenhum template disponível</option>';
                     return;
                 }
@@ -1203,60 +1213,8 @@
             }
         }
 
-            
-            // Desabilitar botão
-            btn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline';
-            
-            try {
-                const customData = {};
-                if (notes) {
-                    // Tentar parsear como JSON ou usar como texto
-                    try {
-                        Object.assign(customData, JSON.parse(notes));
-                    } catch {
-                        customData.notes = notes;
-                    }
-                }
-                
-                const response = await fetch(`${API_BASE}/api/v1/signatures/`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify({
-                        name: name,
-                        template_id: parseInt(templateId),
-                        custom_data: customData
-                    })
-                });
-                
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Erro ao criar assinatura');
-                }
-                
-                alert('✅ Assinatura criada com sucesso!');
-                closeNewSignatureModal();
-                
-                // Recarregar assinaturas
-                mySignatures = [];
-                loadSignatures();
-                
-                // Se estiver em outra aba, ir para "Minhas Assinaturas"
-                document.querySelector('.nav-item[data-target="my-signatures"]').click();
-                
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('❌ ' + error.message);
-            } finally {
-                btn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoading.style.display = 'none';
-            }
-        }
-        
         // Fechar modal ao clicar fora
-        document.getElementById('newSignatureModal')?.addEventListener('click', function(e) {
+        document.getElementById('newSignatureModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeNewSignatureModal();
             }
