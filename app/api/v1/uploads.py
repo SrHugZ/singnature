@@ -7,9 +7,10 @@ from PIL import Image
 import io
 
 from app.db.session import get_db
-from app.db.models import User, UserRole, Organization
+from app.db.models import User, UserRole, Organization, Signature, SignatureTemplate
 from app.api.deps import get_current_user
 from app.services.storage_service import storage_service
+from app.services.signature_service import signature_service
 
 router = APIRouter()
 
@@ -70,7 +71,6 @@ async def upload_image(
     Upload genérico de imagem (por exemplo, imagens usadas em assinaturas).
     Usa o storage_service (S3/obj storage, etc).
     """
-    # Aqui não otimizamos nem gravamos local, deixamos o storage_service cuidar
     image_url = await storage_service.upload_image(
         file=file,
         organization_id=current_user.organization_id,
@@ -133,8 +133,26 @@ async def upload_avatar(
             if old_path.exists():
                 old_path.unlink()
 
-        # Atualizar banco de dados
+        # Atualizar usuário
         current_user.avatar_url = avatar_url
+        db.commit()
+        db.refresh(current_user)
+
+        # 🔁 REGERAR ASSINATURAS DESSE USUÁRIO
+        user_signatures = (
+            db.query(Signature)
+            .filter(Signature.user_id == current_user.id)
+            .all()
+        )
+
+        for sig in user_signatures:
+            if sig.template:
+                sig.html_content = signature_service.render_signature(
+                    sig.template,
+                    current_user,
+                    sig.custom_data or {},
+                )
+
         db.commit()
 
         return {
@@ -168,8 +186,26 @@ async def delete_avatar(
         if file_path.exists():
             file_path.unlink()
 
-    # Atualizar banco de dados
+    # Limpar avatar do usuário
     current_user.avatar_url = None
+    db.commit()
+    db.refresh(current_user)
+
+    # 🔁 REGERAR ASSINATURAS DESSE USUÁRIO (sem avatar agora)
+    user_signatures = (
+        db.query(Signature)
+        .filter(Signature.user_id == current_user.id)
+        .all()
+    )
+
+    for sig in user_signatures:
+        if sig.template:
+            sig.html_content = signature_service.render_signature(
+                sig.template,
+                current_user,
+                sig.custom_data or {},
+            )
+
     db.commit()
 
     return {
@@ -249,8 +285,27 @@ async def upload_logo(
             if old_path.exists():
                 old_path.unlink()
 
-        # Atualizar banco de dados
+        # Atualizar organização
         org.logo_url = logo_url
+        db.commit()
+        db.refresh(org)
+
+        # 🔁 REGERAR TODAS AS ASSINATURAS DA ORGANIZAÇÃO
+        org_signatures = (
+            db.query(Signature)
+            .join(User)
+            .filter(User.organization_id == org.id)
+            .all()
+        )
+
+        for sig in org_signatures:
+            if sig.template and sig.user:
+                sig.html_content = signature_service.render_signature(
+                    sig.template,
+                    sig.user,
+                    sig.custom_data or {},
+                )
+
         db.commit()
 
         return {

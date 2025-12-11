@@ -69,7 +69,7 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
         <td style="padding-right: 20px; vertical-align: top;">
             {% if avatar_url %}
             <img src="{{ avatar_url }}" alt="{{ full_name }}" 
-                 style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #667eea;">
+                 style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #667eea; object-fit: cover;">
             {% else %}
             <div style="width: 80px; height: 80px; border-radius: 50%; 
                         background: linear-gradient(135deg, #667eea, #764ba2); 
@@ -115,9 +115,17 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
                 <span style="color: #667eea;">📍</span> {{ address }}
             </div>
             {% endif %}
-            {% if organization_name %}
+            {% if organization_name or organization_logo %}
             <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
-                <strong>{{ organization_name }}</strong>
+                {% if organization_name %}
+                <div><strong>{{ organization_name }}</strong></div>
+                {% endif %}
+                {% if organization_logo %}
+                <div style="margin-top: 6px;">
+                    <img src="{{ organization_logo }}" alt="{{ organization_name }}"
+                         style="max-height: 28px;">
+                </div>
+                {% endif %}
             </div>
             {% endif %}
         </td>
@@ -125,8 +133,16 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
 </table>
             """,
             variables=[
-                "full_name", "email", "phone", "job_title", "avatar_url",
-                "organization_name", "phone2", "website", "address"
+                "full_name",
+                "email",
+                "phone",
+                "job_title",
+                "avatar_url",
+                "organization_name",
+                "organization_logo",
+                "phone2",
+                "website",
+                "address",
             ],
             is_default=True,
             is_active=True
