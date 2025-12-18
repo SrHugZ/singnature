@@ -124,7 +124,7 @@ async def upload_avatar(
             f.write(optimized_image)
 
         # Gerar URL pública
-        avatar_url = f"https://signature.thebroker.vip/uploads/avatars/{unique_filename}"
+        avatar_url = f"/uploads/avatars/{unique_filename}"
 
         # Deletar avatar antigo se existir e for da mesma pasta
         if current_user.avatar_url and "uploads/avatars/" in current_user.avatar_url:
@@ -263,7 +263,7 @@ async def upload_logo(
             f.write(optimized_image)
 
         # Gerar URL pública
-        logo_url = f"https://signature.thebroker.vip/uploads/logos/{unique_filename}"
+        logo_url = f"/uploads/logos/{unique_filename}"
 
         # Buscar organização do usuário
         org = (
