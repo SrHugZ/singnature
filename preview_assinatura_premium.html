@@ -344,11 +344,23 @@
             border-radius: 16px;
             padding: 40px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .settings-card h2 {
             font-size: 1.8rem;
             margin-bottom: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+            color: #1a1a2e;
+        }
+
+        .settings-card h3 {
+            font-size: 1.3rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: #1a1a2e;
             border-bottom: 2px solid #f3f4f6;
             padding-bottom: 10px;
         }
@@ -362,12 +374,27 @@
         }
 
         .settings-card input[type="text"],
-        .settings-card input[type="email"] {
+        .settings-card input[type="email"],
+        .settings-card input[type="url"],
+        .settings-card input[type="password"],
+        .settings-card textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #e5e7eb;
             border-radius: 8px;
             font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .settings-card textarea {
+            resize: vertical;
+        }
+
+        .settings-card input:focus,
+        .settings-card textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .settings-card button {
@@ -502,10 +529,12 @@
             </div>
         </section>
 
-        <!-- CONFIGURAÇÕES -->
+        <!-- ========================================
+             CONFIGURAÇÕES - SEÇÃO COMPLETA
+             ======================================== -->
         <section id="settings" class="content-section">
             <div class="settings-card">
-                <h2>Minhas Informações</h2>
+                <h2>⚙️ Minhas Informações</h2>
                 
                 <!-- Upload de Avatar -->
                 <div style="margin-bottom: 40px; padding: 30px; background: #f8f9fc; border-radius: 12px; text-align: center;">
@@ -536,17 +565,59 @@
                 
                 <!-- Formulário -->
                 <form id="user-form">
+                    <h3>👤 Informações Pessoais</h3>
+                    
                     <label for="full_name">Nome Completo *</label>
-                    <input type="text" id="full_name" name="full_name" required>
+                    <input type="text" id="full_name" name="full_name" required placeholder="Seu nome completo">
 
                     <label for="email">Email (não pode ser alterado)</label>
                     <input type="email" id="email" name="email" readonly style="background: #f3f4f6; cursor: not-allowed;">
 
-                    <label for="job_title">Cargo / Função</label>
-                    <input type="text" id="job_title" name="job_title">
+                    <label for="job_title">Cargo / Função *</label>
+                    <input type="text" id="job_title" name="job_title" required placeholder="Ex: Designer Gráfico">
 
-                    <label for="phone">Telefone</label>
-                    <input type="text" id="phone" name="phone">
+                    <h3>📞 Contatos</h3>
+
+                    <label for="phone">Telefone Principal *</label>
+                    <input type="text" id="phone" name="phone" required placeholder="+55 11 98765-4321">
+
+                    <label for="phone2">Telefone Secundário <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="text" id="phone2" name="phone2" placeholder="+55 11 91234-5678">
+
+                    <label for="website">Site / Website <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="url" id="website" name="website" placeholder="www.seusite.com">
+
+                    <label for="address">Endereço Completo <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <textarea id="address" name="address" rows="3" placeholder="Rua Example, 123 - Bairro - Cidade/UF"></textarea>
+
+                    <h3>🌐 Redes Sociais</h3>
+
+                    <label for="facebook">Facebook <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="url" id="facebook" name="facebook" placeholder="https://facebook.com/seuperfil">
+
+                    <label for="twitter">Twitter <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="url" id="twitter" name="twitter" placeholder="https://twitter.com/seuperfil">
+
+                    <label for="instagram">Instagram <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/seuperfil">
+
+                    <label for="linkedin">LinkedIn <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/seuperfil">
+
+                    <h3>🔒 Segurança</h3>
+
+                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="color: #856404; margin: 0; font-size: 0.9rem;">
+                            💡 <strong>Dica:</strong> Deixe os campos de senha em branco se não quiser alterá-la
+                        </p>
+                    </div>
+
+                    <label for="new_password">Nova Senha <span style="color: #999; font-weight: 400; font-size: 0.85rem;">(opcional)</span></label>
+                    <input type="password" id="new_password" name="new_password" placeholder="••••••••" minlength="8">
+                    <small style="color: #6b7280; font-size: 0.85rem; display: block; margin-top: 5px;">Mínimo 8 caracteres</small>
+
+                    <label for="confirm_password">Confirmar Nova Senha</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" minlength="8">
 
                     <!-- Campo hidden para avatar_url (usado no submit) -->
                     <input type="hidden" id="avatar_url" name="avatar_url">
@@ -769,19 +840,33 @@
             });
         }
 
-        // PREENCHER FORMULÁRIO (inclui avatar)
+        // ========================================
+        // PREENCHER FORMULÁRIO COMPLETO
+        // ========================================
         function populateSettingsForm() {
             if (!currentUserData) {
                 console.warn('currentUserData não carregado ainda');
                 return;
             }
 
+            // Dados básicos
             document.getElementById('full_name').value = currentUserData.full_name || '';
             document.getElementById('email').value = currentUserData.email || '';
             document.getElementById('job_title').value = currentUserData.job_title || '';
             document.getElementById('phone').value = currentUserData.phone || '';
             document.getElementById('avatar_url').value = currentUserData.avatar_url || '';
 
+            // Custom data (novos campos)
+            const customData = currentUserData.custom_data || {};
+            document.getElementById('phone2').value = customData.phone2 || '';
+            document.getElementById('website').value = customData.website || '';
+            document.getElementById('address').value = customData.address || '';
+            document.getElementById('facebook').value = customData.facebook || '';
+            document.getElementById('twitter').value = customData.twitter || '';
+            document.getElementById('instagram').value = customData.instagram || '';
+            document.getElementById('linkedin').value = customData.linkedin || '';
+
+            // Preview do avatar
             const previewImg = document.getElementById('avatar-preview-img');
             const previewText = document.getElementById('avatar-preview-text');
             const removeBtn = document.getElementById('remove-avatar-btn');
@@ -796,9 +881,15 @@
                 previewText.style.display = 'block';
                 removeBtn.style.display = 'none';
             }
+
+            // Limpar campos de senha
+            document.getElementById('new_password').value = '';
+            document.getElementById('confirm_password').value = '';
         }
 
-        // SALVAR CONFIGURAÇÕES
+        // ========================================
+        // SALVAR CONFIGURAÇÕES COMPLETAS
+        // ========================================
         document.getElementById('user-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             
@@ -806,13 +897,44 @@
                 alert('⚠️ Aguarde o carregamento dos dados do usuário!');
                 return;
             }
+
+            // Validar senhas se preenchidas
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (newPassword || confirmPassword) {
+                if (newPassword !== confirmPassword) {
+                    alert('❌ As senhas não coincidem!');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    alert('❌ A senha deve ter no mínimo 8 caracteres!');
+                    return;
+                }
+            }
             
+            // Coletar TODOS os dados
             const updatedData = {
                 full_name: document.getElementById('full_name').value,
                 job_title: document.getElementById('job_title').value,
                 phone: document.getElementById('phone').value,
-                avatar_url: document.getElementById('avatar_url').value
+                avatar_url: document.getElementById('avatar_url').value,
+                custom_data: {
+                    phone2: document.getElementById('phone2').value || null,
+                    website: document.getElementById('website').value || null,
+                    address: document.getElementById('address').value || null,
+                    facebook: document.getElementById('facebook').value || null,
+                    twitter: document.getElementById('twitter').value || null,
+                    instagram: document.getElementById('instagram').value || null,
+                    linkedin: document.getElementById('linkedin').value || null
+                }
             };
+
+            // Adicionar senha se fornecida
+            if (newPassword) {
+                updatedData.password = newPassword;
+            }
 
             try {
                 const response = await fetch(`${API_BASE}/api/v1/users/me`, { 
@@ -827,7 +949,13 @@
                 }
 
                 alert('✅ Alterações salvas com sucesso!');
-                loadUserData();
+                
+                // Limpar campos de senha
+                document.getElementById('new_password').value = '';
+                document.getElementById('confirm_password').value = '';
+                
+                // Recarregar dados do usuário
+                await loadUserData();
 
             } catch (error) {
                 console.error('Erro ao salvar alterações:', error);
@@ -1053,7 +1181,7 @@
             }
         });
 
-        console.log('✅ Sistema de upload de avatar carregado!');
+        console.log('✅ Sistema completo carregado!');
     </script>
 
     <!-- MODAL: CRIAR NOVA ASSINATURA -->
