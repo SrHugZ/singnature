@@ -55,6 +55,7 @@ class User(BaseModel):
     phone: Optional[str] = None
     job_title: Optional[str] = None
     avatar_url: Optional[str] = None
+    custom_data: Optional[dict] = None
     created_at: datetime
     last_login: Optional[datetime] = None
 
@@ -88,6 +89,7 @@ class UserResponse(BaseModel):
     phone: Optional[str] = None
     job_title: Optional[str] = None
     avatar_url: Optional[str] = None
+    custom_data: Optional[dict] = None
     created_at: datetime
     last_login: Optional[datetime] = None
 
@@ -116,6 +118,7 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     job_title: Optional[str] = None
     avatar_url: Optional[str] = None
+    custom_data: Optional[dict] = None
 
 
 class MemberInvite(BaseModel):

@@ -38,9 +38,32 @@ def update_current_user(
     if user_update.avatar_url is not None:
         current_user.avatar_url = user_update.avatar_url
     
+    if user_update.custom_data is not None:
+        current_user.custom_data = user_update.custom_data
+    
     try:
         db.commit()
         db.refresh(current_user)
+
+        # 🔁 REGERAR ASSINATURAS DESSE USUÁRIO (para refletir mudanças nos dados)
+        from app.db.models import Signature
+        from app.services.signature_service import signature_service
+        
+        user_signatures = (
+            db.query(Signature)
+            .filter(Signature.user_id == current_user.id)
+            .all()
+        )
+
+        for sig in user_signatures:
+            if sig.template:
+                sig.html_content = signature_service.render_signature(
+                    sig.template,
+                    current_user,
+                    sig.custom_data or {},
+                )
+        
+        db.commit()
         return current_user
     except Exception as e:
         db.rollback()

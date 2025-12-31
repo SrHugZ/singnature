@@ -66,6 +66,7 @@ class User(Base):
     phone = Column(String(50), nullable=True)
     job_title = Column(String(255), nullable=True)
     avatar_url = Column(String(500), nullable=True)
+    custom_data = Column(JSON, nullable=True)
     
     google_sub = Column(String(255), unique=True, nullable=True, index=True)
     google_refresh_token_encrypted = Column(Text, nullable=True)
