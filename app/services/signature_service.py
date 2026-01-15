@@ -29,8 +29,12 @@ class SignatureService:
             "organization_logo": user.organization.logo_url if user.organization else "",
             "department": user.department.name if user.department else "",
         }
-        
-        # Adicionar dados customizados
+
+        # Adicionar dados do custom_data do usuário (phone2, website, address, redes sociais)
+        if user.custom_data:
+            context.update(user.custom_data)
+
+        # Adicionar dados customizados da assinatura (sobrescreve os do usuário se houver)
         if custom_data:
             context.update(custom_data)
         

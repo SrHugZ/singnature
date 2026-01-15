@@ -115,6 +115,22 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
                 <span style="color: #667eea;">📍</span> {{ address }}
             </div>
             {% endif %}
+            {% if facebook or twitter or instagram or linkedin %}
+            <div style="margin-top: 10px; margin-bottom: 5px;">
+                {% if facebook %}
+                <a href="{{ facebook }}" style="color: #667eea; text-decoration: none; margin-right: 10px;">📘 Facebook</a>
+                {% endif %}
+                {% if twitter %}
+                <a href="{{ twitter }}" style="color: #667eea; text-decoration: none; margin-right: 10px;">🐦 Twitter</a>
+                {% endif %}
+                {% if instagram %}
+                <a href="{{ instagram }}" style="color: #667eea; text-decoration: none; margin-right: 10px;">📷 Instagram</a>
+                {% endif %}
+                {% if linkedin %}
+                <a href="{{ linkedin }}" style="color: #667eea; text-decoration: none;">💼 LinkedIn</a>
+                {% endif %}
+            </div>
+            {% endif %}
             {% if organization_name or organization_logo %}
             <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ddd;">
                 {% if organization_name %}
@@ -143,6 +159,10 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
                 "phone2",
                 "website",
                 "address",
+                "facebook",
+                "twitter",
+                "instagram",
+                "linkedin",
             ],
             is_default=True,
             is_active=True
