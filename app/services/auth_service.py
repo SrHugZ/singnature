@@ -239,7 +239,7 @@ def register_user(db: Session, user_create: UserCreate) -> TokenResponse:
 
 def login_user(db: Session, user_login: UserLogin) -> TokenResponse:
     """Authenticate user and return tokens"""
-    
+
     try:
         # Find user
         user = db.query(User).filter(User.email == user_login.email).first()
@@ -248,46 +248,55 @@ def login_user(db: Session, user_login: UserLogin) -> TokenResponse:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password"
             )
-        
+
         # Verify password
         if not verify_password(user_login.password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect email or password"
             )
-        
+
         # Check if user is active
         if user.status != UserStatus.ACTIVE:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="User account is not active"
             )
-        
+
         # Update last login
-        user.last_login = datetime.utcnow()
-        db.commit()
-        
+        try:
+            user.last_login = datetime.utcnow()
+            db.commit()
+        except Exception as commit_err:
+            logger.error(f"Erro ao atualizar last_login: {commit_err}", exc_info=True)
+            db.rollback()
+            # Continue login even if last_login update fails
+
         # Generate tokens
+        role_value = user.role.value if user.role else "MEMBER"
         access_token = create_access_token(
-            data={"sub": str(user.id), "org_id": user.organization_id, "role": user.role.value}
+            data={"sub": str(user.id), "org_id": user.organization_id or 0, "role": role_value}
         )
         refresh_token = create_refresh_token(
             data={"sub": str(user.id)}
         )
-        
+
         return TokenResponse(
             access_token=access_token,
             refresh_token=refresh_token,
             expires_in=1800
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         logger.error(f"Erro ao fazer login: {e}", exc_info=True)
+        from app.core.config import settings
+        detail = f"Erro ao processar login: {str(e)}" if settings.DEBUG else "Erro ao processar login"
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro ao processar login"
+            detail=detail
         )
 
 

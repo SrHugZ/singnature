@@ -38,4 +38,31 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "database": "ok", "redis": "ok"}
+    import logging
+    from sqlalchemy import text
+    logger = logging.getLogger(__name__)
+    result = {"status": "healthy"}
+
+    # Test database connection
+    try:
+        from app.db.session import SessionLocal
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        result["database"] = "ok"
+    except Exception as e:
+        logger.error(f"Health check - DB error: {e}")
+        result["database"] = f"error: {str(e)}"
+        result["status"] = "unhealthy"
+
+    # Test Redis connection
+    try:
+        from app.db.redis_client import redis_client
+        redis_client.ping()
+        result["redis"] = "ok"
+    except Exception as e:
+        logger.error(f"Health check - Redis error: {e}")
+        result["redis"] = f"error: {str(e)}"
+        result["status"] = "unhealthy"
+
+    return result
